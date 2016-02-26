@@ -17,7 +17,7 @@
     4.把这些GUI程序与底层代码相链接.
     5.进入主事循环
     Tkinter.mainloop()
-
+#### Tkintr举例 ####
 例 19.1:  
 
     #!/usr/bin/env python
@@ -54,4 +54,68 @@ _按钮有一个额外的参数,Tkinter。quit()方法_
 
 _fill参数告诉packer让QUIT按钮填充水平方向的剩余空间,而不必像以前那样大都使用缺省参数_  
 
-例子 19.4 标签、按钮和进度条组件
+例子 19.4 标签、按钮和进度条组件  
+
+    #!/usr/bin/env python
+    from Tkinter import *
+    def resize(ev=None):
+        label.config(font='Helvetica -%d bold' % \
+                scale.get())
+    top = Tk()
+    top.geometry('250x150')
+    
+    label = Label(top,text='Hello World!',
+        font='Helvetica -12 bold')
+    label.pack(fill=Y,expand=1)
+    
+    scale = Scale(top, from_=10, to=40,
+        orient=HORIZONTAL, command=resize)
+    scale.set(12)
+    scale.pack(fill=X, expand=1)
+    
+    quit = Button(top, text='QUIT',command=top.quit,
+        activeforeground='white',activebackground='red')
+    quit.pack()
+    mainloop()
+
+例 19.5 偏函数应用举例:  
+
+    #!/usr/bin/env python
+    from functools import partial as pto
+    from Tkinter import Tk, Button, X
+    from tkMessageBox import showinfo, showwarning, showerror
+    
+    WARN = 'warn'
+    CRIT = 'crit'
+    REGU = 'regu'
+    
+    SINGS ={
+        'do not enter':CRIT,
+        'railroad crossing':WARN,
+        '55\nspeed limit':REGU,
+        'wrong way':CRIT,
+        'merging traffic':WARN,
+        'one way':REGU,
+    }
+    
+    critCB = lambda: showerror('Error','Error Button Pressed!')
+    warnCB = lambda: showwarning('Warning','Warning Button Pressed!')
+    infoCB = lambda: showinfo('Info','Info Button Pressed!')
+    
+    top = Tk()
+    top.title('Road Sings')
+    Button(top,text='QUIT',command=top.quit,bg='red',fg='white').pack()
+    
+    MyButton = pto(Button, top)
+    CritButton = pto(MyButton, command=critCB, bg='white', fg='red')
+    WarnButton = pto(MyButton, command=warnCB, bg='goldenrod1')
+    ReguButton = pto(MyButton, command=infoCB, bg='white')
+    
+    for eachsign in SINGS:
+        signType = SINGS[eachsign]
+        cmd = '%sButton(text=%r%s).pack(fill=X, expand=True)' % (
+                signType.title(), eachsign,
+                '.upper()' if signType == CRIT else '.title()')
+        eval(cmd)
+    
+    top.mainloop()
