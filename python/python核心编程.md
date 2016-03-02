@@ -230,7 +230,7 @@ _fill参数告诉packer让QUIT按钮填充水平方向的剩余空间,而不必�
     if __name__ == '__main__':
         main()
 
-#### 其他GUI简介 #### 
+#### 其他GUI简介 ####
 _我们将用其中4种比较流行的工具集来编写同一个GUI程序_  
 1.Tix
     #!/usr/bin/env python
