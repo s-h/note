@@ -229,3 +229,84 @@ _fill参数告诉packer让QUIT按钮填充水平方向的剩余空间,而不必�
     
     if __name__ == '__main__':
         main()
+
+#### 其他GUI简介 #### 
+_我们将用其中4种比较流行的工具集来编写同一个GUI程序_  
+1.Tix
+    #!/usr/bin/env python
+    from Tkinter import Label, Button, END
+    from Tix import Tk, Control, ComboBox
+    
+    top = Tk()
+    top.tk.eval('package require Tix')
+    
+    lb = Label(top,
+            text = 'Animals ( in paris; min: pair, max:dozen)')
+    lb.pack()
+    ct = Control(top, label='Number:',
+            intege=True, max=12, min=2, value=2, step=2)
+    ct.label.config(font='Helvetica -14 bold')
+    ct.pack()
+    cb = ComboBox(top, label='Type:', editable=True)
+    for animal in ('dog', 'cat', 'hamster', 'python'):
+        cb.insert(END, animal)
+    cb.pack()
+    
+    qb  = Button(top, text = 'QUIT',
+            command = top.quit, bg='red', fg='white')
+    qb.pack()
+    
+    top.mainloop()
+
+2.PMW  
+
+    #!/usr/bin/env python
+    from Tkinter import Button, END, Label, W
+    from Pmw import initialise, ComboBox, Counter
+    top = initialise()
+    lb = Label(top,
+            text='Animals (in pairs; min: pair, max:dozen)')
+    lb.pack()
+    ct = Counter(top, labelpos=W, label_text='Number:',
+            datatype='integer', entryfield_value=2,
+            increment=2,entryfield_validate={'validator':
+            'integer', 'min':2,'max':12})
+    ct.pack()
+    
+    cb = ComboBox(top, labelpos=W, label_text='Type:')
+    for animal in ('dog', 'cat', 'hamster', 'python'):
+        cb.insert(END, animal)
+    cb.pack()
+    
+    qb = Button(top, text='QUIT',
+            command=top.quit, bg='red', fg='white')
+    qb.pack()
+    
+    top.mainloop()
+
+3.wxPYTHON GUI  
+
+    #!/usr/bin/env python
+    from Tkinter import Label, Button, END
+    from Tix import Tk, Control, ComboBox
+    
+    top = Tk()
+    top.tk.eval('package require Tix')
+    
+    lb = Label(top,
+            text = 'Animals ( in paris; min: pair, max:dozen)')
+    lb.pack()
+    ct = Control(top, label='Number:',
+            intege=True, max=12, min=2, value=2, step=2)
+    ct.label.config(font='Helvetica -14 bold')
+    ct.pack()
+    cb = ComboBox(top, label='Type:', editable=True)
+    for animal in ('dog', 'cat', 'hamster', 'python'):
+        cb.insert(END, animal)
+    cb.pack()
+    
+    qb  = Button(top, text = 'QUIT',
+            command = top.quit, bg='red', fg='white')
+    qb.pack()
+    
+    top.mainloop()
