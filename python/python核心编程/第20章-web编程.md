@@ -25,19 +25,19 @@ urlpase.urljoin() 在需要多个相关URL的时候就需要urljoin()的功能�
 
 
 **urllib**模块 提供了在给定的URL地址下载数据的功能,同时也可以通过字符串的编码、解码来确保他们是有效URL字符串的一部分. 
-+urllib.urlopen() 打开了给定URL字符串与Web链接,并返回了文件的类型,一旦连接成功,将支持f.read()、f.readline()、f.readlines()、f.close()、f.fileno(). 
+1.**urllib.urlopen()** 打开了给定URL字符串与Web链接,并返回了文件的类型,一旦连接成功,将支持f.read()、f.readline()、f.readlines()、f.close()、f.fileno(). 
 
 	urlopen(urlstr, postQueryData=None)
 
 _如果基于数字的权限验证、重定位、cookie等问题,我们建议使用urllib2模块_
 
-+urlib.urlretrieve() 可以方便得将urlstr定位到的整个HTML文件下载到你的本地硬盘上. 
-+urllib.quote() 和 urllib.quote-plus() 获取URL数据,并将其编码,从而试用于URL字符串中.尤其一些不能被打印的或不被WEB服务器作为有效URL接收的特殊字符串必须被转换. 
+2.**urlib.urlretrieve()** 可以方便得将urlstr定位到的整个HTML文件下载到你的本地硬盘上. 
+3.**urllib.quote() 和 urllib.quote-plus()** 获取URL数据,并将其编码,从而试用于URL字符串中.尤其一些不能被打印的或不被WEB服务器作为有效URL接收的特殊字符串必须被转换. 
 
     urllib.quote(urldata, safe='/')
 
 _逗号、下划线、句号、斜线和字母数字这类符号是不需要转化的.其他的则均需要转换.另外，那些不被允许的字符前边会被加上%同时转换成16进制._
 
-+urllib.unquote() 和 urllib.unquote_plus() 和上边的功能完全相反
-+urllib.urlencode() 接收字典的 键-值对,编译为'键=值'
+5.**urllib.unquote() 和 urllib.unquote_plus()** 和上边的功能完全相反
+6.**urllib.urlencode()** 接收字典的 键-值对,编译为'键=值'
 
