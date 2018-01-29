@@ -3,7 +3,7 @@
     >>> print(django.get_version())
     2.0
 
-    $ python -m django --version
+    $ python3 -m django --version
 
 ### MVC设计模式
     模型(Model)、视图(View)、控制器(Controller)
@@ -28,4 +28,34 @@ app与project的 **区别**
 + 一个project可以包含多个app
 + 一个app可以属于多个project
 
+app的存放文职可以是任何地点，通常放在manage.py脚本的同级目录下，创建命令:
+    $ python3 manage.py startpp polls
 
+### 创建模型(model)
+**model** 的本质就是数据库表的布局，再附加一些元数据。每个模型就是python中的类
+我们将创建两个模型：Question和Choice。Question包含一个问题和一个发布日期。Choice包含两个字段：该选项的文本描述和该选项的投票数。每一条Choice都关联到一个Question。这些都是由Python的类来体现，编写的全是Python的代码，不接触任何SQL语句。现在，编辑polls/models.py文件，具体代码如下：
+	# polls/models.py
+
+	from django.db import models
+
+	class Question(models.Model):
+		question_text = models.CharField(max_length=200)
+		pub_date = models.DateTimeField('date published')
+
+	class Choice(models.Model):
+		question = models.ForeignKey(Question, on_delete=models.CASCADE)
+		choice_text = models.CharField(max_length=200)
+		votes = models.IntegerField(default=0)
+每一个类都是django.db.models.Model的子类。每一个字段都是Field类的一个实例，每一个Field实例的名字就是字段的名字。
+
+### 启用模型
+上面的代码，包含两件事：
++ 创建该app对应的数据库表结构
++ 为Question和Choice对象创建基于Python的数据库访问API
+启用模型操作：
+	$ python3 manage.py makemigrations polls
+	$ python3 manage.py sqlmigrate polls 0001
+    $ python3 manage.py migrate                  #同步到数据库
+
+### 视图
+一个视图就是一个页面
