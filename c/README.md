@@ -109,4 +109,26 @@
     *(array1 + 2) == array1[2] // 相同的值
 
 
+## 字符串和字符串函数
+***字符串 是以空字符(\0)结尾的char类型数组
+puts()函数只显示字符串，而且自动在显示的字符串末尾加上换行符。
+定义字符串的几种方法：
+
+    #include <stdio.h>
+    #define MSG "i am a symbolic string constant."
+    #define MAXLENGTH 81
+    int main(void)
+    {
+        char words[MAXLENGTH] = "I am a string in an array.";
+        const char * pt1 = "Something is pointing at me.";
+        puts("Here are some string:");
+        puts(MSG);
+        puts(words);
+        puts(pt1);
+        words[8] = 'p';
+        puts(words);
+        return 0;
+
+    }
+
 
