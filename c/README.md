@@ -115,12 +115,12 @@ puts()函数只显示字符串，而且自动在显示的字符串末尾加上�
 定义字符串的几种方法：
 
     #include <stdio.h>
-    #define MSG "i am a symbolic string constant."
+    #define MSG "i am a symbolic string constant."     //字符串常量
     #define MAXLENGTH 81
     int main(void)
     {
-        char words[MAXLENGTH] = "I am a string in an array.";
-        const char * pt1 = "Something is pointing at me.";
+        char words[MAXLENGTH] = "I am a string in an array."; //char类型数组
+        const char * pt1 = "Something is pointing at me.";   //指向char的指针
         puts("Here are some string:");
         puts(MSG);
         puts(words);
@@ -131,4 +131,24 @@ puts()函数只显示字符串，而且自动在显示的字符串末尾加上�
 
     }
 
++ 字符串常量 属于静态存储类别
++ 字符串数组 要确保数组的元素至少比字符串长度多1（为了容纳空字符数组）
++ 使用指针表示法创建字符串。
+
+    const char * pt1 = "someting is pointing at me." //变量。
+    const char ar1[] = "someting is pointing at me." //常量。和上面等价,带双引号的字符串本身决定预留给字符串的存储空间。
+    两者都可以使用数组表示法：
+    for (i = 0 ; i < 8 ; i++ )
+        putchar(pt1[i]);
+        putchar(ar1[i]);
+    都可进行指针加法:
+    for (i = 0 ; i < 8 ; i++ )
+        putchar(*(pt1 + i));
+        putchar(*(ar1 + i));
+    只有指针能够进行递归操作:
+    while (*(pt1) != '\0')
+        putchar(*(pt1++));
+
+    pt1 = ar1 //pt1指向数组ar1
+    ar1 = pt1 //非法构造，赋值运算符左侧必须是变量。数组的元素是变量，但数组名不是变量。
 
