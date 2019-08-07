@@ -57,5 +57,9 @@ app的存放文职可以是任何地点，通常放在manage.py脚本的同级�
 	$ python3 manage.py sqlmigrate polls 0001
     $ python3 manage.py migrate                  #同步到数据库
 
+### 创建管理员账号
+
+    $ python manager.py createsuperuser
+
 ### 视图
 一个视图就是一个页面
