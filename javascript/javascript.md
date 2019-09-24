@@ -23,4 +23,5 @@ ECMAScript没有类的概念，ECMAScript-262把对象定义为：无序属性�
         writeable: false,
         value: "zhangshan"
     }};
+
 ##### 访问器属性
