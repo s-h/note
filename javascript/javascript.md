@@ -18,6 +18,7 @@ ECMAScript没有类的概念，ECMAScript-262把对象定义为：无序属性�
 + [[Wirtable]] 能否修改属性的值，默认true
 + [[Vaule]] 包含这个属性的值
 
+
     var person = {
     Object.defineProperty(person, "name",{
         writeable: false,
