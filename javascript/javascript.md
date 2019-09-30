@@ -17,7 +17,7 @@ ECMAScript没有类的概念，ECMAScript-262把对象定义为：无序属性�
 + [[Enumerable]] 是否通过for-in循环访问属性，默认true
 + [[Wirtable]] 能否修改属性的值，默认true
 + [[Vaule]] 包含这个属性的值
-
+举例：
 
     var person = {
     Object.defineProperty(person, "name",{
