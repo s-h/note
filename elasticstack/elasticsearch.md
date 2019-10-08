@@ -106,7 +106,7 @@ low
       }
     }
 
-## 数据处理
+## 数据管理
 ### 计算集群文档数量
 
     GET _count?pretty
@@ -147,4 +147,19 @@ low
                 "first_name" : "jianghao"
             }
         }
+    }
+
+## 分片、索引管理
+### 移动分片
+
+    _cluster/reroute
+    {
+    "commands":[{
+        "move":{
+            "index":"indexName",
+                "shard":0,
+                "from_node":"node-1",
+                "to_node":"node-4"
+                }
+                }]
     }
