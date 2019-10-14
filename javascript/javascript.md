@@ -63,7 +63,7 @@ ECMAScript没有类的概念，ECMAScript-262把对象定义为：无序属性�
         }；
     }                                    //没有return语句
 
-    var persion1 = new Person("zhangsan", 20, "doctor");
+    var person1 = new Person("zhangsan", 20, "doctor");
 
 
 构造函数的主要问题每个方法都要在每个实例上创建一遍
@@ -85,3 +85,42 @@ ECMAScript没有类的概念，ECMAScript-262把对象定义为：无序属性�
 无论什么时候，只要创建一个新函数，就会根据一组特定的规则为该函数创建一个prototype属性，这个属性指向函数的原型对象。所有原型对象都会获得一个constructor（构造函数）属性，这个属性是一个指向prototype属性所在的函数的指针。当构造函数创建一个新势力后，该实例的内部将包含一个指针，指向构造函数的原型对象。每个实例都包含一个内部属性，该属性仅仅指向了原型对象。
 当代码杜旭摸个对象的某个属性时，都会执行一次搜索。从对象本身开始。如果在实例中找到了具有给定名字的属性，则返回该属性的值；如果没有找到，则继续搜索指针指向的原型对象，在原型对象中查找具有给定名字的属性。
 虽然可通过对象实例访问保存在原型中的值，却不能通过对象实例重写原型中的值。
+#### 6.2.4 组合使用构造函数和原型模式
+创建自定义类的最常见方法，就是组合使用构造函数模式与原型模式。构造函数模式用于定义实例属性，而原型模式用于定义方法和共享的属性。每个实例都会有自己的一份实例属性副本，但同时又共享着对方法的引用。
+
+    function Person(name, age, job)){
+        this.name = name;
+        this.age = age;
+        this.job = job;
+        this.friends = ["xx", "yy"]
+    }
+
+    Person.prototype = {
+        constructor: Person,
+        sayName: function (){
+            alert(this.name);
+        }
+    }
+
+    var person1 = new Person("zhangsan", 20, "software engineer");
+    var person2 = new Person("lisi", 28, "doctor");
+
+### 6.3 继承
+ECMAScript只支持实现继承，主要依靠原型链来实现。
+#### 6.3.1 原型链
+每个构造函数都有一个原型对象，原型对象包含一个指向构造函数的指针，每个实例都包含一个指向原型对象的内部指针。如果让原定对象等于另一个类型的实例，那么此时的原型对象将包含一个指向另一个原型的指针。
+调用对象方法的步骤：搜索实例>搜索原型对象>沿着原型链向上搜索>Object.prototype
+使用instanceof确认原型与实例直线的关系;或者使用isPrototypeOf()，只要原型链中出现过的原型，都会返回true
+
+    alert(per1 instanceof Objcet); //true
+    alert(per1 instanceof Person); //true
+    alert(Objcet.prototype.isPrototypeOf(per1)); //true
+
+原型链的问题：
++ 通过原型链继承，会造成引用类型属性被子类所有实例共享。
++ 不能向超类的构造函数中传递参数，所以实践中很少单独使用原型链。
+
+#### 6.3.3 组合继承
+组合继承（combination inheritance）也叫做伪经典继承，指的是将原型链和借用构造函数的技术组合到一块。使用原型链实现对属性原型属性和方法的继承，而借用构造函数实现实例属性的继承。
+
+
