@@ -123,4 +123,51 @@ ECMAScript只支持实现继承，主要依靠原型链来实现。
 #### 6.3.3 组合继承
 组合继承（combination inheritance）也叫做伪经典继承，指的是将原型链和借用构造函数的技术组合到一块。使用原型链实现对属性原型属性和方法的继承，而借用构造函数实现实例属性的继承。
 
+    function SuperType(name){
+        this.name = name;
+        this.colors = ["red", "blue", "green"]
+    }
+
+    Supertype.prototype.sayName = function(){
+        alert(this.name);
+    }
+
+    function Subtype(name, age){
+        Supertype.call(this.name);  //继承属性
+    }
+    Subtype.prototype = New Supertype();   //继承方法
+    Subtype.prototype.constructor = Subtype;
+    Subtype.prototype.sayAge = function(){
+        alert(this.age);
+    }
+
+    var instance1 = new Subtype("zhangsan", 29);
+
+### 7函数表达式
+声明函数两种方法：1.函数式声明 2.函数表达式
+函数式声明，重要特征“函数声明提升”，在执行代码之前会先读取函数声明。
+
+    sayHi();
+    function sayHi(){
+        alert("balabala");
+    }
+
+函数表达式
+
+    var sayHi = function() {
+        alert("balabala");
+    }
+
+#### 7.1 递归
+递归函数是在一个函数通过调用自身的情况下构成。
+
+    function factorial(num){
+        if (num <=1 ){
+            return 1;
+        }else{
+            return  num * arguments.callee(num-1);   //arguments.callee是指向一个正在执行的函数的指针。
+        }
+    }
+
+
 
