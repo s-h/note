@@ -138,6 +138,33 @@ low
       }
     }
 
+#### 指标聚合
+相当于msyql聚合函数
+
+	max
+    {
+      "size": 0,
+      "aggs": {
+    	"max_id": {
+    	  "max": {
+    		"field": "id"
+    	  }
+    	}
+      }
+    }
+
+	min
+    {
+      "size": 0,
+      "aggs": {
+    	"min_id": {
+    	  "min": {
+    		"field": "id"
+    	  }
+    	}
+      }
+    }
+
 ### 删除数据
 
     GET test/_delete_by_query
