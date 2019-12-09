@@ -21,6 +21,9 @@
       type => "syslog"
       port => 5000
     }
+### stdin
+
+    stdin {}
 
 ## filter
 ### grok
@@ -64,6 +67,19 @@
       bootstrap_servers => ["192.168.1.1:9092,192.168.1.2:9092,192.168.1.3:9092"]
       topic_id => "syslog"
     }
+  
+### stdout
+
+    stdout {
+      codec=>rubydebug
+    }
 
 ## 控制语句
+## 启动参数
+### 指定配置文件
 
+    lostash -f ../conf.d/xx.conf
+
+### 自动重载配置
+
+    logstash --config.reload.automatic
