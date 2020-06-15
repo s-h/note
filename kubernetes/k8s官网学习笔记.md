@@ -1,3 +1,12 @@
+### 查看pod和工作节点
+#### 使用kubectl进行故障排除
+
+    kubectl get 列出资源
+    kubectl describe 显示资源的详细信息
+    kubectl logs 打印pod和其中容器的日志
+    kubectl exec 在pod中的容器上执行命令
+    kubectl exec -ti $POD_NAME bash 进入容器shell
+
 ### cluster details
 查看集群状态:
 
