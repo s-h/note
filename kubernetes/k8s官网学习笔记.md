@@ -1,3 +1,4 @@
+## 基本命令
 ### 查看pod和工作节点
 #### 使用kubectl进行故障排除
 
@@ -50,3 +51,16 @@ Pod 为特定于应用程序的“逻辑主机”建模，并且可以包含相�
 
 #### work node
 一个pod总是运行在**工作节点**, 由**主节点**管理
+
+## 服务
+### 服务类型
++ ClusterIP: 通过集群的内部IP暴露服务，服务只能够在集群内部可以访问，默认的ServiceType
++ NodePort：通过每个Node的IP和静态端口（NodePort）暴露服务。NodePort服务会路由到ClusterIP服务，这个ClusterIP服务会自动创建。通过请求<NodeIP><NodePort>，可以从集群的外部访问一个NodePort服务。
++ LoadBalancer: 使用云提供的负载均衡器，可以向外部暴露服务。外部负载均衡器可以路由到NodePort服务和ClusterIP服务。
++ Externalname：通过返回CNAME和它的值，可以将服务映射到externalname字段内容
+
+#### NodePort
+默认端口30000-32767，每个节点分配相同的端口，代理到服务中。
+
+#### LoadBalancer
+负载均衡是异步创建的，通过Service的status.loadbalancer字段发布出去
