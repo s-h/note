@@ -1,74 +1,92 @@
-#### »ù±¾ÃüÁî
-##### Ê¹ÓÃpullÃüÁîÏÂÔØ¾µÏñ
-##### Ê¹ÓÃimageÃüÁîÁĞ³ö¾µÏñÄ¿Â¼
-##### run´´½¨ÈİÆ÷
-ÃüÁî¸ñÊ½ run <Ñ¡Ïî> <¾µÏñÃû³Æ> <ÒªÔËĞĞµÄÎÄ¼ş>
+### åŸºæœ¬å‘½ä»¤
+#### ä½¿ç”¨pullå‘½ä»¤ä¸‹è½½é•œåƒ
+#### ä½¿ç”¨imageå‘½ä»¤åˆ—å‡ºé•œåƒç›®å½•
+#### runåˆ›å»ºå®¹å™¨
+å‘½ä»¤æ ¼å¼ run <é€‰é¡¹> <é•œåƒåç§°> <è¦è¿è¡Œçš„æ–‡ä»¶>
 
     docker -i -t -d --name myos ubuntu /bin/bash
 
-> -i¡¢-t Ñ¡Ïî¿ÉÒÔÔÚÔËĞĞµÄbashÖĞÊäÈëÊä³ö
-> -d ºóÌ¨ÔËĞĞ
-> -e »·¾³±äÁ¿ Èç -e PATH=$PATH:/opt/bin/
-##### psÃüÁî²é¿´
-> -a ÁĞ³öÈ«²¿
-##### startÆô¶¯ÈİÆ÷
-##### stopÍ£Ö¹ÈİÆ÷
-##### exec´ÓÍâ²¿ÔËĞĞÈİÆ÷ÄÚÃüÁî
+> -iã€-t é€‰é¡¹å¯ä»¥åœ¨è¿è¡Œçš„bashä¸­è¾“å…¥è¾“å‡º
+> -d åå°è¿è¡Œ
+> -e ç¯å¢ƒå˜é‡ å¦‚ -e PATH=$PATH:/opt/bin/
+#### pså‘½ä»¤æŸ¥çœ‹
+> -a åˆ—å‡ºå…¨éƒ¨
+#### startå¯åŠ¨å®¹å™¨
+#### stopåœæ­¢å®¹å™¨
+#### execä»å¤–éƒ¨è¿è¡Œå®¹å™¨å†…å‘½ä»¤
 
     docker exec -it xxx /bin/bash
 
-##### rmÉ¾³ıÈİÆ÷
-##### rmiÉ¾³ı¾µÏñ
+#### rmåˆ é™¤å®¹å™¨
+#### rmiåˆ é™¤é•œåƒ
+#### æŸ¥çœ‹å®¹å™¨è¿›ç¨‹
 
-#### ±àĞ´Dockerfile
-> FROM: Ö¸¶¨»ù´¡¾µÏñ
-> MAINTAINER: Î¬»¤ÕßĞÅÏ¢
-> RUN: ÔËĞĞshell½Å±¾»òÕßÃüÁî
-> VLUME: ÓëÖ÷»ú¹²ÏíµÄÄ¿Â¼
-> WORKDIR: ÎªCMDÖĞÉèÖÃ¿ÉÖ´ĞĞÎÄ¼şµÄÄ¿Â¼
-> EXPOSE: ÓëÖ÷»úÏàÁ¬µÄ¶Ë¿ÚºÅ
+    docker top <å®¹å™¨åç§°>
 
-##### Ê¹ÓÃbuildÃüÁî´´½¨¾µÏñ
-ÔÚ±£´æDockerfileµÄÄ¿Â¼ÖĞÖ´ĞĞ
+##### æŸ¥çœ‹å®¹å™¨è¯¦æƒ…
 
-    docker build <Ñ¡Ïî> <DockerfileÂ·¾¶>
+    docker container inspect <å®¹å™¨åç§°>
+
+##### æŸ¥çœ‹ç»Ÿè®¡ä¿¡æ¯
+cpuã€å†…å­˜ã€å­˜å‚¨ã€ç½‘ç»œç»Ÿè®¡ä¿¡æ¯
+   
+    docker stats <å®¹å™¨åç§°>
+
+#### æŸ¥çœ‹ç«¯å£æ˜ å°„
+
+    docker container port <å®¹å™¨åç§°>
+
+
+### Dockerfile
+#### ç¼–å†™Dockerfile
+> FROM: æŒ‡å®šåŸºç¡€é•œåƒ
+> MAINTAINER: ç»´æŠ¤è€…ä¿¡æ¯
+> RUN: è¿è¡Œshellè„šæœ¬æˆ–è€…å‘½ä»¤
+> VLUME: ä¸ä¸»æœºå…±äº«çš„ç›®å½•
+> WORKDIR: ä¸ºCMDä¸­è®¾ç½®å¯æ‰§è¡Œæ–‡ä»¶çš„ç›®å½•
+> EXPOSE: ä¸ä¸»æœºç›¸è¿çš„ç«¯å£å·
+##### ä½¿ç”¨buildå‘½ä»¤åˆ›å»ºé•œåƒ
+åœ¨ä¿å­˜Dockerfileçš„ç›®å½•ä¸­æ‰§è¡Œ
+
+    docker build <é€‰é¡¹> <Dockerfileè·¯å¾„>
     docker build --tag xx:xx .
 
-#### Ê¹ÓÃhistory²é¿´¾µÏñÀúÊ·
-#### Ê¹ÓÃcommitÃüÁî´ÓÈİÆ÷µÄĞŞ¸ÄÖĞ´´½¨¾µÏñ
+#### ä½¿ç”¨historyæŸ¥çœ‹é•œåƒå†å²
+#### ä½¿ç”¨commitå‘½ä»¤ä»å®¹å™¨çš„ä¿®æ”¹ä¸­åˆ›å»ºé•œåƒ
 
-     docker commit <Ñ¡Ïî> <ÈİÆ÷Ãû³Æ> <¾µÏñÃû³Æ>:<±êÇ©>
+     docker commit <é€‰é¡¹> <å®¹å™¨åç§°> <é•œåƒåç§°>:<æ ‡ç­¾>
      docker commit -a "Foo Bar <foo@bar.com>" -m "add" hello-nginx nginx:0.2
 
-#### Ê¹ÓÃdiffÃüÁî¼ì²éÈİÆ÷ÎÄ¼şµÄĞŞ¸Ä
-#### dockerÊı¾İ¾í
--mount Ê¹ÓÃÊı¾İ¾í£¬Ö§³ÖÈıÖÖÀàĞÍµÄÊı¾İ¾í£º
-> volume: ÆÕÍ¨Êı¾İ¾í£¬Ó³Éäµ½Ö÷»ú/var/lib/docker/volumesÂ·¾¶ÏÂ
-> bind: °ó¶¨Êı¾İ¾í£¬ Ó³Éäµ½Ö÷»úÖ¸¶¨Â·¾¶ÏÂ
-> tmpfs: ÁÙÊ±Êı¾İ¾í£¬Ö»´æÔÚÄÚ´æÖĞ
+#### ä½¿ç”¨diffå‘½ä»¤æ£€æŸ¥å®¹å™¨æ–‡ä»¶çš„ä¿®æ”¹
+### dockeræ•°æ®å·
+-mount ä½¿ç”¨æ•°æ®å·ï¼Œæ”¯æŒä¸‰ç§ç±»å‹çš„æ•°æ®å·ï¼š
+> volume: æ™®é€šæ•°æ®å·ï¼Œæ˜ å°„åˆ°ä¸»æœº/var/lib/docker/volumesè·¯å¾„ä¸‹
+> bind: ç»‘å®šæ•°æ®å·ï¼Œ æ˜ å°„åˆ°ä¸»æœºæŒ‡å®šè·¯å¾„ä¸‹
+> tmpfs: ä¸´æ—¶æ•°æ®å·ï¼Œåªå­˜åœ¨å†…å­˜ä¸­
 
-    docker run -d -P --name web --mount type=bind,source=/webapp,destination=/opt/webbapp <¾µÏñÃû> python app.py
+    docker run -d -P --name web --mount type=bind,source=/webapp,destination=/opt/webbapp <é•œåƒå> python app.py
 
-ÉÏÊöÃüÁîµÈÓÚ¾ÉµÄ-v±ê¼Ç
+ä¸Šè¿°å‘½ä»¤ç­‰äºæ—§çš„-væ ‡è®°
 
-     -v <Ö÷»úÄ¿Â¼>:<ÈİÆ÷Ä¿Â¼>
-     docker run -d -P --name web -v /webapp:/opt/webapp <¾µÏñÃû> python app.py
-#### ²é¿´ÈİÆ÷½ø³Ì
+     -v <ä¸»æœºç›®å½•>:<å®¹å™¨ç›®å½•>
+     docker run -d -P --name web -v /webapp:/opt/webapp <é•œåƒå> python app.py
 
-    docker top <ÈİÆ÷Ãû³Æ>
+### msyql
+#### æŸ¥çœ‹å¯ç”¨é€‰é¡¹å®Œæ•´åˆ—è¡¨
 
-##### ²é¿´ÈİÆ÷ÏêÇé
+    docker run -it --rm mysql --verbose --help
 
-    docker container inspect <ÈİÆ÷Ãû³Æ>
+#### å®˜æ–¹mysqlé•œåƒä½œä¸ºå®¢æˆ·ç«¯
 
-##### ²é¿´Í³¼ÆĞÅÏ¢
-cpu¡¢ÄÚ´æ¡¢´æ´¢¡¢ÍøÂçÍ³¼ÆĞÅÏ¢
-   
-    docker stats <ÈİÆ÷Ãû³Æ>
+    docker run -it --rm mysql mysql -hsome.mysql.host -usome-mysql user -p
 
-#### ²é¿´¶Ë¿ÚÓ³Éä
+### zookeeper
 
-    docker container port <ÈİÆ÷Ãû³Æ>
+    docker network create --driver bridge --subnet=172.19.0.0/16 --gateway=172.19.1.1 mynet
 
+    docker run -d -p 2181:2181 --name zk1 --privileged --restart always --network mynet --ip 172.19.0.10 -v /root/zook/zk1/data:/data -v /root/zook/zk1/datalog:/datalog -v /root/zook/zk1/logs:/logs -e ZOO_MY_ID=1 -e "ZOO_SERVERS=server.1=172.19.0.10:2888:3888;2181 server.2=172.19.0.11:2888:3888;2181 server.3=172.19.0.12:2888:3888;2181" -e "ZOO_4LW_COMMANDS_WHITELIST=*" zookeeper 
 
+    docker run -d -p 2182:2181 --name zk2 --privileged --restart always --network mynet --ip 172.19.0.11 -v /root/zook/zk2/data:/data -v /root/zook/zk2/datalog:/datalog -v /root/zook/zk2/logs:/logs -e ZOO_MY_ID=2 -e "ZOO_SERVERS=server.1=172.19.0.10:2888:3888;2181 server.2=172.19.0.11:2888:3888;2181 server.3=172.19.0.12:2888:3888;2181" -e "ZOO_4LW_COMMANDS_WHITELIST=*" zookeeper
+
+    docker run -d -p 2183:2181 --name zk3 --privileged --restart always --network mynet --ip 172.19.0.12 -v /root/zook/zk3/data:/data -v /root/zook/zk3/datalog:/datalog -v /root/zook/zk3/logs:/logs -e ZOO_MY_ID=3 -e "ZOO_SERVERS=server.1=172.19.0.10:2888:3888;2181 server.2=172.19.0.11:2888:3888;2181 server.3=172.19.0.12:2888:3888;2181" -e "ZOO_4LW_COMMANDS_WHITELIST=*" zookeeper
     
