@@ -82,11 +82,11 @@ cpu、内存、存储、网络统计信息
 
 ### zookeeper
 
-    docker network create --driver bridge --subnet=172.19.0.0/16 --gateway=172.19.1.1 mynet
+    docker network create --driver bridge --subnet=172.15.0.0/16 --gateway=172.15.1.1 netgroup
 
-    docker run -d -p 2181:2181 --name zk1 --privileged --restart always --network mynet --ip 172.19.0.10 -v /root/zook/zk1/data:/data -v /root/zook/zk1/datalog:/datalog -v /root/zook/zk1/logs:/logs -e ZOO_MY_ID=1 -e "ZOO_SERVERS=server.1=172.19.0.10:2888:3888;2181 server.2=172.19.0.11:2888:3888;2181 server.3=172.19.0.12:2888:3888;2181" -e "ZOO_4LW_COMMANDS_WHITELIST=*" zookeeper 
+    docker run -d -p 2181:2181 --name zk1 --privileged --restart always --network netgroup --ip 172.15.0.10 -v /opt/zook/zk1/data:/data -v /opt/zook/zk1/datalog:/datalog -v /opt/zook/zk1/logs:/logs -e ZOO_MY_ID=1 -e "ZOO_SERVERS=server.1=172.15.0.10:2888:3888;2181 server.2=172.15.0.11:2888:3888;2181 server.3=172.15.0.12:2888:3888;2181" -e "ZOO_4LW_COMMANDS_WHITELIST=*" zookeeper 
 
-    docker run -d -p 2182:2181 --name zk2 --privileged --restart always --network mynet --ip 172.19.0.11 -v /root/zook/zk2/data:/data -v /root/zook/zk2/datalog:/datalog -v /root/zook/zk2/logs:/logs -e ZOO_MY_ID=2 -e "ZOO_SERVERS=server.1=172.19.0.10:2888:3888;2181 server.2=172.19.0.11:2888:3888;2181 server.3=172.19.0.12:2888:3888;2181" -e "ZOO_4LW_COMMANDS_WHITELIST=*" zookeeper
+    docker run -d -p 2182:2181 --name zk2 --privileged --restart always --network netgroup --ip 172.15.0.11 -v /opt/zook/zk2/data:/data -v /opt/zook/zk2/datalog:/datalog -v /opt/zook/zk2/logs:/logs -e ZOO_MY_ID=2 -e "ZOO_SERVERS=server.1=172.15.0.10:2888:3888;2181 server.2=172.15.0.11:2888:3888;2181 server.3=172.15.0.12:2888:3888;2181" -e "ZOO_4LW_COMMANDS_WHITELIST=*" zookeeper
 
-    docker run -d -p 2183:2181 --name zk3 --privileged --restart always --network mynet --ip 172.19.0.12 -v /root/zook/zk3/data:/data -v /root/zook/zk3/datalog:/datalog -v /root/zook/zk3/logs:/logs -e ZOO_MY_ID=3 -e "ZOO_SERVERS=server.1=172.19.0.10:2888:3888;2181 server.2=172.19.0.11:2888:3888;2181 server.3=172.19.0.12:2888:3888;2181" -e "ZOO_4LW_COMMANDS_WHITELIST=*" zookeeper
+    docker run -d -p 2183:2181 --name zk3 --privileged --restart always --network netgroup --ip 172.15.0.12 -v /opt/zook/zk3/data:/data -v /opt/zook/zk3/datalog:/datalog -v /opt/zook/zk3/logs:/logs -e ZOO_MY_ID=3 -e "ZOO_SERVERS=server.1=172.15.0.10:2888:3888;2181 server.2=172.15.0.11:2888:3888;2181 server.3=172.15.0.12:2888:3888;2181" -e "ZOO_4LW_COMMANDS_WHITELIST=*" zookeeper
     
