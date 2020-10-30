@@ -114,4 +114,13 @@ cpu、内存、存储、网络统计信息
     rabbitmqctl add_user admin password
     rabbitmqctl set_user_tags admin administrator
 
+#### java
+使用Dockerfile创建镜像
 
+    # cat Dockerfile
+    FROM openjdk:14
+    EXPOSE 8888
+    COPY demo-0.0.1-SNAPSHOT.jar /opt/demo-0.0.1-SNAPSHOT.jar
+    WORKDIR /opt/
+    ENTRYPOINT ["java", "-jar", "demo-0.0.1-SNAPSHOT.jar"]
+    #  docker run -it -d -p 8888:8888 --name myapp myapp:1.0
