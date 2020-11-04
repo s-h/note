@@ -66,13 +66,13 @@ mysql使用**LIMIT**
     ORDER BY prod_name;
 
 ### 用通配符进行过滤
-**%**匹配任意字符，通配符**不会**匹配NULL
+%匹配任意字符，通配符**不会**匹配NULL
 
     SELECT  prod_id, prod_name
     FROM Products
     WHERE prod_name LIKE 'Fish%';
 
-**_**下划线匹配单个字符
+_下划线匹配单个字符
 
 ## 创建计算字段
 ### 连接字符
@@ -94,10 +94,10 @@ mysql使用**LIMIT**
 
 ## 使用函数处理数据
 只有少数几个函数被所有主要的DBMS等同地支持，常用：
-PRRIM() 去除列值右边的空格
-UPPER() 将文本转换为大写
-ABS() 绝对值
-EXP() 指数值
++ PRRIM() 去除列值右边的空格
++ UPPER() 将文本转换为大写
++ ABS() 绝对值
++ EXP() 指数值
 
 ## 汇总数据
 ### 汇总函数
@@ -108,12 +108,14 @@ EXP() 指数值
 + MIN() 最小值
 + SUM() 和
 
+一些例子：
+
     SELECT AVG(prod_price) AS avg_price
     FROM Products;
 
     SELECT COUNT(*) AS num_cust
     FROM Customers;
-    #COUNT()函数会忽略指定列的值为空的行，但如果使用*则不忽略
+    -- COUNT()函数会忽略指定列的值为空的行，但如果使用*则不忽略
 
     SELECT SUM(quantity)
     FROM OrderItems
@@ -130,7 +132,7 @@ EXP() 指数值
 ### 创建分组
 使用**GROUP BY**创建分组
 
-    # GROUP BY 语句指示按vend_id排序
+    -- GROUP BY 语句指示按vend_id排序
     SELECT vend_id, COUNT(*) AS num_prods
     FROM products
     GROUP BY vend_id;
@@ -143,7 +145,7 @@ EXP() 指数值
     GROUP BY cust_id
     HAVING COUNT(*) >=2;
 
-    #WHERE和HAVING同时使用
+    -- WHERE和HAVING同时使用
     SELECT vend_id, COUNT(*) AS num_prods
     FROM Products
     WHERE prod_price >=4
@@ -152,10 +154,13 @@ EXP() 指数值
 
 ### 分组与排序
 一般在使用 GROUP BY 子句时，应该也给出 ORDER BY 子句。这是保证数据正确排序的唯一方法。千万不要仅依赖 GROUP BY 排序数据。
-ORDER BY                    |                GROUP BY
-对产生的输出排序              |          对行分组，但输出可能不是分组的顺序
-任意列都可以使用              |          只能使用选择列或表达式列
-不一定需要                   |           如果与聚集函数一起使用，则必须使用
+
+    ------------------------------------------------------------------------
+    ORDER BY                    |                GROUP BY
+    对产生的输出排序             |          对行分组，但输出可能不是分组的顺序
+    任意列都可以使用             |          只能使用选择列或表达式列         
+    不一定需要                   |           如果与聚集函数一起使用，则必须使用
+    ------------------------------------------------------------------------
 
     SELECT order_num, COUNT(*) AS items
     FROM OrderItems
@@ -230,3 +235,110 @@ SELECT语句必须遵循以下次序:
 
 ### 自联结
 self-join SELECT不止一次联结相同的表
+
+    SELECT cust_id, cust_name, cust_contact
+    FROM customers
+    WHERE cust_name=(SELECT cust_name 
+                    FROM  customers 
+                    WHERE cust_contact = 'Jim Jones');
+
+    -- 使用联结相同查询：
+    SELECT c1.cust_id, c1.cust_name, c1.cust_contact
+    FROM customers AS c1, customers AS c2
+    WHERE c1.cust_name = c2.cust_name
+    AND C2.cust_contact = 'Jim Jones';
+
+### 外联结
+使用**OUTER JOIN**创建外联结，外联结包括没有关联的行，**LEFT**包含左边表所有的行，**RIGHT**包含右边表所有的行
+
+    SELECT customers.cust_id, orders.order_num
+    FROM customers LEFT OUTER JOIN orders
+    ON customers.cust_id = orders.cust_id;
+
+### 带聚集函数的联结
+聚集函数可以与联结一起使用
+
+    SELECT customers.cust_id,
+           COUNT(orders.order_num) AS num_ord
+    FROM customers INNER JOIN orders
+    ON customers.cust_id = orders.cust_id
+    GROUP BY customers.cust_id;
+
+## 组合查询
+SQL允许执行多个查询（多条SELECT语句），并将结果作为一个查询集返回。这些组合查询通常称为并（union）或符合查询（compound query）。
+主要有两种情况使用组合查询：
++ 在一个查询中从不同的表返回结构数据
++ 对一个表执行多个查询，安一个查询返回数据
+### 创建组合查询
+使用**UNION**组合数条SQL查询，必须包含两条或两条以上SELECT；每个查询包含相同的列、列的数据类型相同。
+
+    SELECT cust_name, cust_contact, cust_email
+    FROM customers
+    WHERE cust_state IN ('TL', 'IN', 'MI')
+    UNION
+    SELECT cust_name, cust_contact, cust_email
+    FROM customers
+    WHERE cust_name = 'E Fudd';
+
+## 插入数据
+### 数据插入
+使用**INSERT**进行数据插入
+
+    -- 插入完整的行
+    INSERT INTO customers
+    VALUES('100000006',
+        'zhangsan',
+        '123 any street',
+        'new york',
+        'ny',
+        '111',
+        'usa',
+        NULL,
+        NULL);
+
+    INSERT INTO customers(cust_id,
+                        cust_name,
+                        cust_address,
+                        cust_city,
+                        cust_state,
+                        cust_zip,
+                        cust_country,
+                        cust_contact,
+                        cust_email)
+    VALUES('100000007',
+        'lisi',
+        '123 any street',
+        'new york',
+        'ny',
+        '111',
+        'usa',
+        NULL,
+        NULL);
+
+### 插入检索出的数据
+使用**INSERT SELECT**插入检索出的数据
+
+    INSERT INTO customers(cust_id,
+                        cust_name,
+                        cust_address,
+                        cust_city,
+                        cust_state,
+                        cust_zip,
+                        cust_country,
+                        cust_contact,
+                        cust_email)
+    SELECT cust_id,
+        cust_name,
+        cust_address,
+        cust_city,
+        cust_state,
+        cust_zip,
+        cust_country,
+        cust_contact,
+        cust_email
+    FROM custnew;
+
+### 从一个表复制到另一个表
+
+    CREATE TABLE custcopy AS
+    SELECT * FROM customers;
