@@ -342,3 +342,54 @@ SQL允许执行多个查询（多条SELECT语句），并将结果作为一个�
 
     CREATE TABLE custcopy AS
     SELECT * FROM customers;
+
+## 更新和删除数据
+### 更新数据
+
+    UPDATE customers
+    SET cust_email='a@mail.com'
+    WHERE cust_id='10005';
+
+### 删除数据
+
+    DELETE FROM customers
+    WHERE cust_id = '10001';
+
+    -- 清空表 不记录
+    TRUNCATE tablename;
+
+## 创建和操作表
+### 创建表
+允许NULL的列允许插入时不给定值，**default**默认值
+
+    CREATE TABLE newtable
+    (id CHAR(10) NOT NULL,
+    price DECIMAL(8,2) NULL,
+    P_desc VARCHAR(1000) NOT NULL DEFAULT 'hello'
+    );
+
+### 更新表
+**ALTER**对表进行更新
+
+    ALTER TABLE newtable
+    ADD p_field2 CHAR(20) NOT NULL;
+
+复杂的表结构修改一般需要手动删除过程：
++ 用新的列布局创建一个新表
++ 使用INSERT SELECT语句复制数据
++ 检验新表
++ 重命名旧表、新表
++ 重新创建触发器、存储过程、索引和外键
+
+### 删除表
+
+    DROP TABLE tablename;
+
+## 视图
+使用**CREATE VIEW**创建视图，隐藏复杂的SQL
+
+    CREATE VIEW myview AS 
+    SELECT cust_name, cust_contact, prod_id 
+    FROM Customers, Orders, OrderItems 
+    WHERE Customers.cust_id = Orders.cust_id 
+    AND OrderItems.order_num = Orders.order_num;
