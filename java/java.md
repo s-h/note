@@ -57,6 +57,7 @@ protected 可以修饰数据成员，构造方法，方法成员，不能修饰�
 + 抽象类：不能用来实例化对象，声明抽象类的唯一目的是为了对该类进行扩充。abstract和final不能同时修饰类。
 + 抽象方法：是一种没有任何实现的方法，具体实现由子类实现。
 
+
     public abstract class SuperClass{
         abstract void m(); //抽象方法
     }
