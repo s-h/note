@@ -80,7 +80,17 @@ cpu、内存、存储、网络统计信息
 
     docker run -it --rm mysql mysql -hsome.mysql.host -usome-mysql user -p
 
-#### zookeeper
+#### 创建mysql容器
+
+    docker run -p 3306:3306 --name mysql \
+    -v /data/docker/mysql/conf.d:/etc/mysql/conf.d \
+    -v /data/docker/mysql/logs:/var/log/mysql \
+    -v /data/docker/mysql/data:/var/lib/mysql \
+    -e MYSQL_ROOT_PASSWORD=123456 \
+    -d mysql:5.7.28
+    # MySQL(5.7.19)的默认配置文件是 /etc/mysql/my.cnf 文件。如果想要自定义配置，建议向 /etc/mysql/conf.d 目录中创建 .cnf 文件。新建的文件可以任意起名，只要保证后缀名是 cnf 即可。新建的文件中的配置项可以覆盖 /etc/mysql/my.cnf 中的配置项。
+
+### zookeeper
 
     docker network create --driver bridge --subnet=172.15.0.0/16 --gateway=172.15.1.1 netgroup
 
@@ -90,18 +100,18 @@ cpu、内存、存储、网络统计信息
 
     docker run -d -p 2183:2181 --name zk3 --privileged --restart always --network netgroup --ip 172.15.0.12 -v /opt/zook/zk3/data:/data -v /opt/zook/zk3/datalog:/datalog -v /opt/zook/zk3/logs:/logs -e ZOO_MY_ID=3 -e "ZOO_SERVERS=server.1=172.15.0.10:2888:3888;2181 server.2=172.15.0.11:2888:3888;2181 server.3=172.15.0.12:2888:3888;2181" -e "ZOO_4LW_COMMANDS_WHITELIST=*" zookeeper
 
-#### rabbitMQ 集群
-##### 创建两个mq节点
+### rabbitMQ 集群
+#### 创建两个mq节点
 
     docker run -i -d --name mq1 --hostname mq1 --add-host=mq2:172.18.0.6 -p 5672:5672 -p 15672:15672 rabbitmq:3.8.9-management rabbitmq-server
     docker run -i -d --name mq2 --hostname mq2 --add-host=mq1:172.18.0.5 -p 5673:5672 -p 15673:15672 rabbitmq:3.8.9-management rabbitmq-server
 
-##### 同步两个节点erlang
+#### 同步两个节点erlang
 
     docker cp mq1:/var/lib/rabbitmq/.erlang.cookie .
     docker cp .erlang.cookie mq2:/var/lib/rabbitmq/
 
-##### 添加集群节点
+#### 添加集群节点
 在mq2节点操作
 
     rabbitmqctl stop_app
@@ -109,12 +119,12 @@ cpu、内存、存储、网络统计信息
     rabbitmqctl start_app
     rabbitmqctl cluster_status
 
-##### 添加用户
+#### 添加用户
 
     rabbitmqctl add_user admin password
     rabbitmqctl set_user_tags admin administrator
 
-#### java
+### java
 使用Dockerfile创建镜像
 
     # cat Dockerfile
