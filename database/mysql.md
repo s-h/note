@@ -7,7 +7,7 @@
 ### 查看引擎
 suport字段为DEFAULT的为默认引擎
 
-    show engines；
+    show engines;
 
 ### 查看binlog
 
