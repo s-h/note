@@ -1,3 +1,42 @@
+<!-- TOC -->
+
+- [docker](#docker)
+    - [基本命令](#基本命令)
+        - [使用pull命令下载镜像](#使用pull命令下载镜像)
+        - [使用image命令列出镜像目录](#使用image命令列出镜像目录)
+        - [run创建容器](#run创建容器)
+        - [ps命令查看](#ps命令查看)
+        - [start启动容器](#start启动容器)
+        - [stop停止容器](#stop停止容器)
+        - [exec从外部运行容器内命令](#exec从外部运行容器内命令)
+        - [rm删除容器](#rm删除容器)
+        - [rmi删除镜像](#rmi删除镜像)
+        - [查看容器进程](#查看容器进程)
+            - [查看容器详情](#查看容器详情)
+            - [查看统计信息](#查看统计信息)
+        - [查看端口映射](#查看端口映射)
+        - [查看日志](#查看日志)
+    - [Dockerfile](#dockerfile)
+        - [编写Dockerfile](#编写dockerfile)
+            - [使用build命令创建镜像](#使用build命令创建镜像)
+        - [使用history查看镜像历史](#使用history查看镜像历史)
+        - [使用commit命令从容器的修改中创建镜像](#使用commit命令从容器的修改中创建镜像)
+        - [使用diff命令检查容器文件的修改](#使用diff命令检查容器文件的修改)
+    - [docker数据卷](#docker数据卷)
+    - [msyql](#msyql)
+        - [查看可用选项完整列表](#查看可用选项完整列表)
+        - [官方mysql镜像作为客户端](#官方mysql镜像作为客户端)
+        - [创建mysql容器](#创建mysql容器)
+    - [zookeeper](#zookeeper)
+    - [rabbitMQ 集群](#rabbitmq-集群)
+        - [创建两个mq节点](#创建两个mq节点)
+        - [同步两个节点erlang](#同步两个节点erlang)
+        - [添加集群节点](#添加集群节点)
+        - [添加用户](#添加用户)
+    - [java](#java)
+
+<!-- /TOC -->
+## docker
 ### 基本命令
 #### 使用pull命令下载镜像
 #### 使用image命令列出镜像目录
@@ -36,6 +75,9 @@ cpu、内存、存储、网络统计信息
 
     docker container port <容器名称>
 
+#### 查看日志
+
+    docker logs -f -t --tail=1000 xxx
 
 ### Dockerfile
 #### 编写Dockerfile
