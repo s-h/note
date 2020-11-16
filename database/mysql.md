@@ -13,4 +13,14 @@ suport字段为DEFAULT的为默认引擎
 
     show variables like '%log_bin%';
 
+### 锁表
+
+    # 查看锁表 
+    # 返回Table_locks_immediate结果，意思是表被锁了总数
+    # Table_locks_waited表示有多少请求等待表锁
+    SHOW STATUS LIKE 'Table_locks%';
+
+    # InnoDB_row_lock行锁的争夺情况
+    # show status like 'innodb_row_lock%';
+
 ## mysqludmp
