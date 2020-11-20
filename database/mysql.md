@@ -13,6 +13,10 @@ suport字段为DEFAULT的为默认引擎
 
     show variables like '%log_bin%';
 
+### 查看连接
+
+    SELECT substring_index(host, ':',1) AS host_name,state,count(*) FROM information_schema.processlist GROUP BY state,host_name;
+
 ### 锁表
 
     # 查看锁表 
