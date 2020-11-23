@@ -1,4 +1,7 @@
 # firewalld
+## zone
+zone是一套规则集，对于一个请求使用哪个zone，firewalld使用一下规则判断：
+source>interface>firewalld
 ## 查看规则
 
     firewall-cmd --list-all
