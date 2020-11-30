@@ -54,7 +54,11 @@ suport字段为DEFAULT的为默认引擎
 
 ### 1.3.2. 赋权
 
-    grant all privileges on dbname.* to user_name@localhost identified by 'user_password';     
+    # 指定数据库、用户、远程地址、密码
+    grant all privileges on dbname.* to user_name@localhost identified by 'user_password'; 
+
+    # 所有库、所有远程地址
+    grant all privileges on *.* to user_name@'%' identified by 'user_password'; 
 
 ### 1.3.3. 刷新权限
 
