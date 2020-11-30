@@ -11,6 +11,7 @@
     - [1.3. database](#13-database)
         - [1.3.1. 创建数据库](#131-创建数据库)
         - [1.3.2. 赋权](#132-赋权)
+        - [1.3.3. 刷新权限](#133-刷新权限)
     - [1.4. 导入数据](#14-导入数据)
         - [1.4.1. 导入gz格式数据](#141-导入gz格式数据)
 
@@ -54,6 +55,10 @@ suport字段为DEFAULT的为默认引擎
 ### 1.3.2. 赋权
 
     grant all privileges on dbname.* to user_name@localhost identified by 'user_password';     
+
+### 1.3.3. 刷新权限
+
+    FLUSH PRIVILEGES;
 
 ## 1.4. 导入数据
 ### 1.4.1. 导入gz格式数据
