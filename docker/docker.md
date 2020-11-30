@@ -16,6 +16,7 @@
             - [查看统计信息](#查看统计信息)
         - [查看端口映射](#查看端口映射)
         - [查看日志](#查看日志)
+        - [添加开机启动](#添加开机启动)
     - [Dockerfile](#dockerfile)
         - [编写Dockerfile](#编写dockerfile)
             - [使用build命令创建镜像](#使用build命令创建镜像)
@@ -78,6 +79,10 @@ cpu、内存、存储、网络统计信息
 #### 查看日志
 
     docker logs -f -t --tail=1000 xxx
+
+#### 添加开机启动
+
+    docker update --restart=always container_id
 
 ### Dockerfile
 #### 编写Dockerfile
