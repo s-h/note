@@ -60,6 +60,17 @@ suport字段为DEFAULT的为默认引擎
     # 所有库、所有远程地址
     grant all privileges on *.* to user_name@'%' identified by 'user_password'; 
 
+    GRANT：执行命令词，一般为动词
+    ALL：赋予权限名，参考下面的权限列表
+    *.*：前者表示数据库名，后者表示数据表名
+    databasename.*：表示在databasename中的所有表
+    databasename.tablename：表示在databasename中的tablename表
+    'username'@'localhost'：前者为用户名，后者为接入的IP
+    'username'@'%'：可以从任何地点接入
+    'username'@'192.168.1.%' ：192.168.1 IP下的局域网都可接入
+    'username'@'%.website.com'：可以从http://website.com接入
+    'username'@'localhost': 只可以本机登录
+
 ### 1.3.3. 刷新权限
 
     FLUSH PRIVILEGES;
