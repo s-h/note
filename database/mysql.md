@@ -7,6 +7,8 @@
         - [1.1.3. 查看binlog](#113-查看binlog)
         - [1.1.4. 查看连接](#114-查看连接)
         - [1.1.5. 锁表](#115-锁表)
+    - [问题处理](#问题处理)
+        - [解决MySQL非聚合列未包含在GROUP BY子句报错问题](#解决mysql非聚合列未包含在group-by子句报错问题)
     - [1.2. mysqludmp](#12-mysqludmp)
     - [1.3. database](#13-database)
         - [1.3.1. 创建数据库](#131-创建数据库)
@@ -44,6 +46,20 @@ suport字段为DEFAULT的为默认引擎
 
     # InnoDB_row_lock行锁的争夺情况
     # show status like 'innodb_row_lock%';
+
+## 问题处理
+### 解决MySQL非聚合列未包含在GROUP BY子句报错问题
+执行类似以下mysql查询，
+
+    SELECT id, name, count(*) AS cnt FROM case_table GROUP BY name
+
+报错，如下：
+
+    服务器内部错误 (1055, "Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'case_table.id' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by")
+
+解决，修改mysql配置，添加：
+
+    sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION 
 
 ## 1.2. mysqludmp
 
