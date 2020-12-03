@@ -1,4 +1,4 @@
-# nginx
+# nginx 配置
 ## user
 ## worker_process 
 
@@ -59,3 +59,9 @@
 
     # 引用后端服务
     proxy_pass http://bakend/;
+
+# nging遇到问题
+## location pass_porxy 代理站点路径跳转问题
+location xxx配置代理后，页面中的链接、跳转都不带location，因为网页中的链接使用了绝对路径如/static/1.css，而不是相对路径如static/1.css
+
+结果办法：使用相对路径或者使用不同域名直接使用location /
