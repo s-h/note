@@ -6,7 +6,8 @@
         - [1.1.2. 查看引擎](#112-查看引擎)
         - [1.1.3. 查看binlog](#113-查看binlog)
         - [1.1.4. 查看连接](#114-查看连接)
-        - [1.1.5. 锁表](#115-锁表)
+        - [1.1.5. 查看正在执行的语句](#115-查看正在执行的语句)
+        - [1.1.6. 锁表](#116-锁表)
     - [1.2. 问题处理](#12-问题处理)
         - [1.2.1. 解决MySQL非聚合列未包含在GROUP BY子句报错问题](#121-解决mysql非聚合列未包含在group-by子句报错问题)
     - [1.3. mysqludmp](#13-mysqludmp)
@@ -37,7 +38,11 @@ suport字段为DEFAULT的为默认引擎
 
     SELECT substring_index(host, ':',1) AS host_name,state,count(*) FROM information_schema.processlist GROUP BY state,host_name;
 
-### 1.1.5. 锁表
+### 1.1.5. 查看正在执行的语句
+
+    show full processlist;
+
+### 1.1.6. 锁表
 
     # 查看锁表 
     # 返回Table_locks_immediate结果，意思是表被锁了总数
