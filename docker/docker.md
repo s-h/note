@@ -17,6 +17,7 @@
         - [查看端口映射](#查看端口映射)
         - [查看日志](#查看日志)
         - [添加开机启动](#添加开机启动)
+        - [cp拷贝文件](#cp拷贝文件)
     - [Dockerfile](#dockerfile)
         - [编写Dockerfile](#编写dockerfile)
             - [使用build命令创建镜像](#使用build命令创建镜像)
@@ -83,6 +84,11 @@ cpu、内存、存储、网络统计信息
 #### 添加开机启动
 
     docker update --restart=always container_id
+
+#### cp拷贝文件
+拷贝容器时区文件
+
+    docker cp  /usr/share/zoneinfo/Asia/Shanghai 容器ID:/etc/localtime
 
 ### Dockerfile
 #### 编写Dockerfile

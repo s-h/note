@@ -54,6 +54,21 @@
     location ~* pattern    开头表示不区分大小写的正则匹配
     location /uri    不带任何修饰符，也表示前缀匹配，但是在正则匹配之后
     location /    通用匹配，任何未匹配到其它location的请求都会匹配到，相当于switch中的default
+##### try_files
+可应用的上下文：server，location段
+格式1：try_files file ... uri;  格式2：try_files file ... =code;
+关键点1：按指定的file顺序查找存在的文件，并使用第一个找到的文件进行请求处理
+关键点2：查找路径是按照给定的root或alias为根路径来查找的
+关键点3：如果给出的file都没有匹配到，则重新请求最后一个参数给定的uri，就是新的location匹配
+关键点4：如果是格式2，如果最后一个参数是 = 404 ，若给出的file都没有匹配到，则最后返回404的响应码
+
+    location ^~ / {
+                root  /data/nginx/html/;
+                index  index.html index.htm;
+                try_files $uri $uri/ /index.html last;
+        }
+    适合vue spa应用配置
+
 
 ##### proxy_pass
 
