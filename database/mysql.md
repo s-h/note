@@ -5,9 +5,10 @@
         - [1.1.1. 查看mysql版本](#111-查看mysql版本)
         - [1.1.2. 查看引擎](#112-查看引擎)
         - [1.1.3. 查看binlog](#113-查看binlog)
-        - [1.1.4. 查看连接](#114-查看连接)
-        - [1.1.5. 查看正在执行的语句](#115-查看正在执行的语句)
-        - [1.1.6. 锁表](#116-锁表)
+        - [1.1.4. binlog刷新时机](#114-binlog刷新时机)
+        - [1.1.5. 查看连接](#115-查看连接)
+        - [1.1.6. 查看正在执行的语句](#116-查看正在执行的语句)
+        - [1.1.7. 锁表](#117-锁表)
     - [1.2. 问题处理](#12-问题处理)
         - [1.2.1. 解决MySQL非聚合列未包含在GROUP BY子句报错问题](#121-解决mysql非聚合列未包含在group-by子句报错问题)
     - [1.3. mysqludmp](#13-mysqludmp)
@@ -32,17 +33,24 @@ suport字段为DEFAULT的为默认引擎
 
 ### 1.1.3. 查看binlog
 
+    # 是否开启binlog
     show variables like '%log_bin%';
+    # binlog详细信息
+    show global variables like '%log%';
 
-### 1.1.4. 查看连接
+### 1.1.4. binlog刷新时机
+如果设置为0，则表示MySQL不控制binlog的刷新，由文件系统去控制它缓存的刷新；
+如果设置为不为0的值，则表示每 sync_binlog 次事务，MySQL调用文件系统的刷新操作刷新binlog到磁盘中。
+设为1是最安全的，在系统故障时最多丢失一个事务的更新，但是会对性能有所影响。
+### 1.1.5. 查看连接
 
     SELECT substring_index(host, ':',1) AS host_name,state,count(*) FROM information_schema.processlist GROUP BY state,host_name;
 
-### 1.1.5. 查看正在执行的语句
+### 1.1.6. 查看正在执行的语句
 
     show full processlist;
 
-### 1.1.6. 锁表
+### 1.1.7. 锁表
 
     # 查看锁表 
     # 返回Table_locks_immediate结果，意思是表被锁了总数
