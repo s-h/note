@@ -45,6 +45,11 @@
 
 ### server
 #### listen
+#### server_name_in_redirect
+如果启用server_name_in_redirect，则Nginx将使用server_name指令的第一个值进行重定向。 如果关闭server_name_in_redirect，则nginx将使用请求的Host标头。默认on。
+
+    server_name_in_redirect off;
+
 #### server_name
 #### location
 
