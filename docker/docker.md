@@ -36,6 +36,7 @@
         - [添加集群节点](#添加集群节点)
         - [添加用户](#添加用户)
     - [java](#java)
+    - [redis](#redis)
 
 <!-- /TOC -->
 ## docker
@@ -135,12 +136,12 @@ cpu、内存、存储、网络统计信息
 
 #### 创建mysql容器
 
-    docker run -p 3306:3306 --name mysql \
+    docker run -p 3306:3306 --name mysql -e  TZ='Asia/Shanghai' \
     -v /data/docker/mysql/conf.d:/etc/mysql/conf.d \
     -v /data/docker/mysql/logs:/var/log/mysql \
     -v /data/docker/mysql/data:/var/lib/mysql \
-    -e MYSQL_ROOT_PASSWORD=123456 \
-    -d mysql:5.7.28
+    -e MYSQL_ROOT_PASSWORD=youpassword \
+    -d mysql:5.7.28 
     # MySQL(5.7.19)的默认配置文件是 /etc/mysql/my.cnf 文件。如果想要自定义配置，建议向 /etc/mysql/conf.d 目录中创建 .cnf 文件。新建的文件可以任意起名，只要保证后缀名是 cnf 即可。新建的文件中的配置项可以覆盖 /etc/mysql/my.cnf 中的配置项。
 
 ### zookeeper
@@ -187,3 +188,12 @@ cpu、内存、存储、网络统计信息
     WORKDIR /opt/
     ENTRYPOINT ["java", "-jar", "demo-0.0.1-SNAPSHOT.jar"]
     #  docker run -it -d -p 8888:8888 --name myapp myapp:1.0
+
+### redis
+
+    mkdir -p /data/docker/redis/conf/
+    mkdir -p /data/docker/redis/logs/
+    touch /data/docker/redis/conf/redis.conf
+    touch /data/docker/redis/logs/redis.log
+
+    docker run -it -d --name redis -p 6379:6379 -v /data/docker/redis/conf/redis.conf:/etc/redis/redis.conf -v /data/docker/redis/logs/redis.log:/var/log/redis.log -v  /data/docker/redis/data/:/data redis:5.0.7 redis-server /etc/redis/redis.conf --appendonly yes
