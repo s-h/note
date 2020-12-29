@@ -96,8 +96,8 @@ cpu、内存、存储、网络统计信息
 > FROM: 指定基础镜像
 > MAINTAINER: 维护者信息
 > RUN: 运行shell脚本或者命令
-> VLUME: 与主机共享的目录
-> WORKDIR: 为CMD中设置可执行文件的目录
+> VLUME: 与主机共享的目录，run时不指定该目录系统也会自动挂载
+> WORKDIR: 为CMD中设置可执行文件的目录，包括run时运行命令的路径
 > EXPOSE: 与主机相连的端口号
 ##### 使用build命令创建镜像
 在保存Dockerfile的目录中执行
