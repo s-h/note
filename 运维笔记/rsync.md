@@ -12,7 +12,8 @@ secrets file #用户密码文件，格式 用户名:密码
     # password-file 权限必须为600，格式 密码
     # -pgo 保持文件权限
     # --delete 删除文件，不加该参数本地删除后远程不删除
-    rsync -azvR -pgo --delete /data rsync_user@118.89.248.41::test --password-file=rsync.password
+    # 如果源为绝对路径，复制后目标目录将增加源路径目录；如复制后不想一串路径，可在rsync前cd到要复制到目录，在使用相对路径。
+    rsync -azvR -pgo --delete /data/abc rsync_user@192.168.1.1::test --password-file=rsync.password
 
 ## 过滤规则
 rsync的include和exclude可以说是最令人困惑的地方之一了，我的建议源文件以及exclude的路径都使用绝对路径。

@@ -59,13 +59,16 @@
     sudo chown $(id -u):$(id -g) $HOME/.kube/config
     kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
+    安装flannel插件
+    docker pull registry.aliyuncs.com/google_containers/flannel:v1.18.2-amd64
+
 ### 查看组件状态
 
     kubectl get cs
 
 ## node节点安装
 
-    apt install kubelet kubectl kubead
+    apt install kubelet kubectl kubeadm
 
     kubeadm join 192.168.162.71:6443 --token v9yil9.29mxuw3x8r0yj56t \
     --discovery-token-ca-cert-hash sha256:4b930bdffc81c3f301979c2ecc2a4167555799e36f897f015c4192eaf4d41ed1
