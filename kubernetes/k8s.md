@@ -8,6 +8,11 @@
     kubectl exec 在pod中的容器上执行命令
     kubectl exec -ti $POD_NAME bash 进入容器shell
 
+#### 修改节点roles
+默认node节点roles为none，指定为work：
+
+    kubectl label node k8s-node01(节点名称) node-role.kubernetes.io/worker=worker
+
 ### cluster details
 查看集群状态:
 
