@@ -17,15 +17,30 @@ RBAC API 声明四种Kubernlletes对象Role、ClusterRole、RoleBinding、Cluste
 Role 总是用来在某个名字空间 内设置访问权限；在你创建 Role 时，你必须指定该 Role 所属的名字空间。
 与之相对，ClusterRole 则是一个集群作用域的资源。这两种资源的名字不同（Role 和 ClusterRole）是因为 Kubernetes 对象要么是名字空间作用域的，要么是集群作用域的， 不可两者兼具。
 
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: Role
-    metadata:
-      namespace: default
-      name: pod-reader
-    rules:
-    - apiGroups: [""] # "" 标明 core API 组
-      resources: ["pods"]
-      verbs: ["get", "watch", "list"]
+  apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    namespace: default
+    name: pod-reader
+  rules:
+  - apiGroups: [""] # "" 标明 core API 组
+    resources: ["pods"]
+    verbs: ["get", "watch", "list"]
+
+#### RBAC试题
+Task
+创建一个名为deployment-clusterrole且仅允许创建一下资源类型的新ClusterRole：
++ Deployment
++ StatefulSet
++ DaemonSet
+在现有的namespace app-team1中创建一个名为cicd-token的新ServiceAccount。
+
+限于namespace app-team1，将新的ClusterRole deployment-clusterrole绑定到新的ServiceAccount cicd-token。
+
+  kubectl create clusterrole deployment-clusterrole --verb=create --resource=deployments,statefulsets,daemonsets
+  kubectl -n app-team1 create serviceaccount cicd-token
+  kubectl -n app-team1 create rolebinding cicd-token-binding --clusterrole=deployment-clusterrole --serviceaccount=app-team1:cicd-token
+  kubectl -n app-team1 describe rolebindings.rbac.authorization.k8s.io cicd-token-binding
 
 ### 使用Kubeadm安装基本集群
 ### 管理高可用性的Kubernetes集群

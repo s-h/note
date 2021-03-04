@@ -78,3 +78,5 @@
 
 
 
+## 命令补全
+source <(kubectl completion bash)
