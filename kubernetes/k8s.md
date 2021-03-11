@@ -13,6 +13,10 @@
 
     kubectl label node k8s-node01(节点名称) node-role.kubernetes.io/worker=worker
 
+#### 允许pod调度到master节点
+
+ kubectl taint nodes --all node-role.kubernetes.io/master-
+
 ### cluster details
 查看集群状态:
 
