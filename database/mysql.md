@@ -100,6 +100,12 @@ suport字段为DEFAULT的为默认引擎
     'username'@'%.website.com'：可以从http://website.com接入
     'username'@'localhost': 只可以本机登录
 
+    # mysql 8.0
+    CREATE USER 'user_name'@'%' IDENTIFIED BY 'user_password';
+    grant all privileges on *.* TO 'user_name'@'%' WITH GRANT OPTION;
+
+    ALTER USER 'user_name'@'%' IDENTIFIED WITH mysql_native_password BY 'user_password';
+
 ### 1.4.3. 刷新权限
 
     FLUSH PRIVILEGES;
