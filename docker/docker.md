@@ -1,6 +1,8 @@
 <!-- TOC -->
 
 - [docker](#docker)
+    - [安装](#安装)
+        - [centos](#centos)
     - [基本命令](#基本命令)
         - [使用pull命令下载镜像](#使用pull命令下载镜像)
         - [使用image命令列出镜像目录](#使用image命令列出镜像目录)
@@ -40,6 +42,12 @@
 
 <!-- /TOC -->
 ## docker
+### 安装
+#### centos
+
+    yum install  yum-utils device-mapper-persistent-data lvm2
+    yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
 ### 基本命令
 #### 使用pull命令下载镜像
 #### 使用image命令列出镜像目录
