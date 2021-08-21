@@ -33,6 +33,7 @@
 + 整数型（byte short int long）
 + 浮点型（float double）
 + 字符型（char）
+java中单引号表示字符，双引号表示字符串
 + 布尔型（boolean)
 ### 引用数据类型
 ## 类型转换
