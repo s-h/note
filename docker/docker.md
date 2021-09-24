@@ -47,6 +47,7 @@
 
     yum install  yum-utils device-mapper-persistent-data lvm2
     yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    yum install docker-ce
 
 ### 基本命令
 #### 使用pull命令下载镜像
