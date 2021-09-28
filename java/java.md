@@ -15,6 +15,8 @@
     - [类](#类)
         - [使用对象类型作为参数方法](#使用对象类型作为参数方法)
         - [成员变量与局部变量](#成员变量与局部变量)
+        - [构造方法](#构造方法)
+        - [标准类（Java Bean）](#标准类java-bean)
     - [封装](#封装)
     - [继承](#继承)
         - [继承的特性](#继承的特性)
@@ -22,6 +24,8 @@
             - [extends](#extends)
             - [implements](#implements)
             - [super与this](#super与this)
+            - [super](#super)
+            - [this](#this)
     - [接口](#接口)
         - [接口的特性](#接口的特性)
         - [接口的实现](#接口的实现)
@@ -112,6 +116,58 @@ java中单引号表示字符，双引号表示字符串
 + 内存的位置不一样，局部变量位于栈内存，成员变量位于堆内存。
 + 生命周期，局部变量随着方法进栈而诞生，随着方法出栈而消失；成员变量随着对象创建而诞生，随着对象被垃圾回收而消失。
 
+### 构造方法
+构造方法的调用通过new关键字
+1. 构造方法的名称必须和所在的类名称完全一样，大小写一样；
+2. 构造方法不能return，不能写void
+3. 如果没有写任何构造方法，编写器默认添加一个构造方法，方法体为空。
+
+    public class Student(){
+
+        public Student(){
+            //方法体
+        }
+    }
+### 标准类（Java Bean）
+一个标准的类通常要拥有下面四个组成部分
+1. 所有的成员变量都要使用private关键字修饰
+2. 为每一个成员变量编写一对儿Getter/Setter方法
+3. 编写一个无参数的构造方法
+4. 编写一个全参数的构造方法
+
+一个标准的的类也叫做Java Bean
+
+    public class Student {
+    private String name;
+    private int age;
+
+    public Student() {
+    }
+
+    public Student(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+}
+
+
 ## 封装
 ## 继承
 ### 继承的特性
@@ -137,8 +193,14 @@ java类的继承属于大一继承，一个子类只能拥有一个父类
     }
 
 #### super与this
-+ super：访问父类成员，引用当前对象的父类
-+ this：指向自己的引用
+#### super
+访问父类成员，引用当前对象的父类
+#### this
+指向自己的引用, 当方法的局部变量重名的时候，根据“就近原则”，优先使用局部变量。
+如果需要访问本类中的成员变量，需要根据格式：
+
+        this.成员变量
+
 ## 接口
 接口（英文：Interface），在JAVA编程语言中是一个抽象类型，是抽象方法的集合，接口通常以interface来声明。一个类通过继承接口的方式，从而来继承接口的抽象方法。
 接口并不是类，编写接口的方式和类很相似，但是它们属于不同的概念。类描述对象的属性和方法。接口则包含类要实现的方法。
