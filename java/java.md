@@ -17,6 +17,10 @@
         - [成员变量与局部变量](#成员变量与局部变量)
         - [构造方法](#构造方法)
         - [标准类（Java Bean）](#标准类java-bean)
+    - [java常用类](#java常用类)
+        - [Scanner](#scanner)
+        - [匿名对象](#匿名对象)
+        - [random](#random)
     - [封装](#封装)
     - [继承](#继承)
         - [继承的特性](#继承的特性)
@@ -167,7 +171,25 @@ java中单引号表示字符，双引号表示字符串
     }
 }
 
+## java常用类
+### Scanner
 
+    Scanner sc = new Scanner(System.in);
+    // 获取键盘标准输入
+    int num = sc.nextInt();
+    String st = sc.next();
+### 匿名对象
+匿名对象就是只有右边的对象，没有左边的名字和赋值
+
+    new 类名称();
+    int num = new Scanner(system.in).nextInt();
+
+匿名对象只能使用唯一的一次，如果确定有一个对象只需要使用唯一的一次，就可以使用匿名对象。
+### random
+
+    Random r = new Random(); 
+    r.nextInt();    //返回int范围内随机数
+    r.nextInt(3);   //范围0~2
 ## 封装
 ## 继承
 ### 继承的特性
