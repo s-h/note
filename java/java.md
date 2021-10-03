@@ -21,6 +21,7 @@
         - [Scanner](#scanner)
         - [匿名对象](#匿名对象)
         - [random](#random)
+        - [ArrayList](#arraylist)
     - [封装](#封装)
     - [继承](#继承)
         - [继承的特性](#继承的特性)
@@ -190,6 +191,35 @@ java中单引号表示字符，双引号表示字符串
     Random r = new Random(); 
     r.nextInt();    //返回int范围内随机数
     r.nextInt(3);   //范围0~2
+
+### ArrayList
+java.util.ArrayList 是大小可变的数组的实现，存储在内的数据称为元素。此类提供一些方法来操作内部存储的元素。ArrayList中可不断添加元素，其大小也自动增长。
+**泛型**也就是集合中的所有元素都是同一个的类型，泛型只能是**引用类型**
+
+    //创建一个ArrayList集合，集合的名称是list，里面装的全是String类型
+    ArrayList<String> list = new ArrayList<>();
+    // 添加
+    list.add("倚天剑");
+    // 获取元素 返回<E>元素
+    String name = list.get(0);
+    // 删除元素 返回<E>元素
+    String whoRmoved = list.remove(0);
+    // 获取集合元素个数
+    int size = list.size();
+
+如果希望向集合里存放基本类型，必须使用基本类型对应的“包装类”：
++ byte --> Byte
++ short --> Short 
++ int --> Integer
++ long --> Long
++ float --> Float
++ doubel --> Double
++ char --> Character
++ boolean --> Boolean
+
+    ArrayList<Integer> list = ArrayList<>();
+    list.add(100);
+    
 ## 封装
 ## 继承
 ### 继承的特性
