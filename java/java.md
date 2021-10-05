@@ -22,6 +22,13 @@
         - [匿名对象](#匿名对象)
         - [random](#random)
         - [ArrayList](#arraylist)
+        - [String](#string)
+            - [字符串常量池](#字符串常量池)
+            - [equals](#equals)
+            - [length](#length)
+            - [concat(String str)](#concatstring-str)
+            - [charAt(int index)](#charatint-index)
+            - [indexof(String str)](#indexofstring-str)
     - [封装](#封装)
     - [继承](#继承)
         - [继承的特性](#继承的特性)
@@ -219,7 +226,66 @@ java.util.ArrayList 是大小可变的数组的实现，存储在内的数据称
 
     ArrayList<Integer> list = ArrayList<>();
     list.add(100);
-    
+
+### String
+字符串的特点：
++ 字符串的内容永不可变
++ 字符串可以共享使用
++ 字符串效果上相当于是char[]字符数组，底层原理是byte[]字节数组。
+
+三种构造方法：
+public String() 创建一个空白字符串，不含有任何内容。
+public String(char[] array) 根据字符数组的内容，创建对应的字符串
+public String(byte[] array) 根据字节数组的内容，创建对应的字符串
+
+    // 使用空参构造
+    String str1 = new String();
+
+    // 根据字符串创建字符串
+    char[] charArray = {'A', 'B', 'C'};
+    String str2 = new String(charArray);
+
+    // 根据字节数组创建字符串
+    byte[] byteArray = {97, 98, 99};
+    String str3 = new String(byteArray);
+
+    // 直接创建
+    String str4 = "hello";
+
+#### 字符串常量池
+**字符串常量池**程序中直接写上的双引号字符串，就在字符串常量池中
+对于基本类型 == 比较的是数值
+对于引用类型 == 比较的是地址值
+
+    // 字符串常量池
+    String str4 = "abc";
+    String str5 = "abc";
+
+    char [] charArray2 = {'a', 'b', 'c'};
+    String str6 = new String(charArray2);
+
+    System.out.println(str4 == str5);  //true
+    System.out.println(str5 == str6);  //false
+    System.out.println(str4 == str6);  //false
+
+#### equals
+pulibc boolean equals(Object obj) ,参数可以是任何对象，只有参数是一个字符串并且内容相同的才会给true否则返回false
+
+    str4.equals(str6);
+    "abc".equals(str4);
+
+#### length
+获取字符串含有的字符个数，拿到字符串长度
+
+#### concat(String str)
+将当前字符串和参数拼接成为返回值新的字符串
+
+#### charAt(int index)
+获取指定索引位置的单个字符
+
+#### indexof(String str)
+查找参数字符串在本字符串当中首次出现的索引位置，如果没有返回-1
+
 ## 封装
 ## 继承
 ### 继承的特性
