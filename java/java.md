@@ -29,12 +29,18 @@
             - [concat(String str)](#concatstring-str)
             - [charAt(int index)](#charatint-index)
             - [indexof(String str)](#indexofstring-str)
+            - [字符串截取](#字符串截取)
+            - [字符串转换](#字符串转换)
+            - [split](#split)
+        - [Arrays](#arrays)
+            - [Math](#math)
     - [封装](#封装)
     - [继承](#继承)
         - [继承的特性](#继承的特性)
         - [继承关键字](#继承关键字)
             - [extends](#extends)
             - [implements](#implements)
+            - [重写override](#重写override)
             - [super与this](#super与this)
             - [super](#super)
             - [this](#this)
@@ -49,6 +55,7 @@
             - [protected](#protected)
         - [非访问修饰符](#非访问修饰符)
             - [static](#static)
+                - [静态代码块](#静态代码块)
             - [final](#final)
             - [abstract](#abstract)
 
@@ -286,8 +293,41 @@ pulibc boolean equals(Object obj) ,参数可以是任何对象，只有参数是
 #### indexof(String str)
 查找参数字符串在本字符串当中首次出现的索引位置，如果没有返回-1
 
+#### 字符串截取
+public String substring(int index) 截取从参数位置一直到字符串结尾，返回新字符串
+public String substring(int begin, int end) 截取从begin开始，一直end结束，中间的字符串
+
+#### 字符串转换
+public char[] toCharArray()   将当前字符串拆分成为字符数组作为返回值。
+public byte[] getBytes()      获取当前字符串地城的字节数组
+public String replace(CharSequence oldString, CharSequence new String) 将所有出现的老字符串替换为新的字符串，返回替换之后的结果新字符串。
+#### split
+public String[] split(String regex) 按照规则，将字符串切分成若干部分，返回数组
+
+### Arrays
+java.util.Arrays是一个与数组相关的工具类，里面提供了大量静态方法，用来实现数组常见的操作。
+public static String toString(数组) 将参数数组变为数组
+public static void sort(数组) 按照默认升序对数组进行排序
+
+#### Math
+java.util.Math 数学相关工具类
+public static double abs(double)  获取绝对值
+public static double ceil(double) 向上取整
+public static double floor(double) 向下取整
+public static long round(double num) 四舍五入
+
 ## 封装
 ## 继承
+继承主要解决的问题就是共性抽取
+
+    public class 父类名称 {
+        ...
+    }
+
+    public class 子类名称 extends 父类名称 {
+
+    }
+
 ### 继承的特性
 + 子类拥有父类非private的属性、方法
 + 子类可以拥有自己的属性和方法
@@ -309,7 +349,14 @@ java类的继承属于大一继承，一个子类只能拥有一个父类
     
     public class C implements A,B {
     }
-
+#### 重写override
+方法覆盖重写的注意事项
+1.必须保证父子类之间的方法名称相同，参数列表也相同。
+@Override 写在方法前面，用来检测是不是有效的正确覆盖重写。
+2.子类方法的返回值必须**小于等于**父类方法的返回值范围。
+前提：java.lang.Object类是所有类的公共最高父类
+3.子类方法的权限必须**大于等于**父类方法的权限修饰符。
+public > protected > (default) > private
 #### super与this
 #### super
 访问父类成员，引用当前对象的父类
@@ -385,8 +432,24 @@ protected 可以修饰数据成员，构造方法，方法成员，不能修饰�
 **子类与基类不在同一包中**：子类实例可以访问从基类集成而来的属性
 ### 非访问修饰符
 #### static
-+ 静态变量：无论一个类实例化多少对象，静态变量也称为实例变量，局部变量不能被声明成为static方法。
++ 静态变量：无论一个类实例化多少对象，静态变量也称为实例变量，局部变量不能被声明成为static方法。凡是本类的实例共享同一份。
 + 静态方法：静态方法不能使用非静态变量。静态方法从参数列表得到数据，然后计算这些数据。
+成员方法可以访问成员变量；
+成员方法可以访问静态变量；
+静态方法可以访问静态变量；
+静态方法**不能**直接反问成员变量。
+静态方法不能使用this关键字。
+##### 静态代码块
+当第一次使用本类时，静态代码块执行唯一的一次。
+静态内容总是优于非静态，所以静态代码块比构造先执行。
+典型用途：用来一次性的对静态成员变量进行赋值。
+
+    public class 类名称{
+        static {
+            // 静态代码块
+        }
+    }
+
 #### final
 + final变量：一旦赋值后，不能被重新赋值。
 + final方法：不能被子类重写。
