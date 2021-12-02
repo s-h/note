@@ -25,7 +25,11 @@
         - [Scanner](#scanner)
         - [匿名对象](#匿名对象)
         - [random](#random)
-        - [ArrayList](#arraylist)
+        - [List](#list)
+            - [ArrayList](#arraylist)
+                - [获取元素](#获取元素)
+            - [LinkedList](#linkedlist)
+                - [创建对象及添加元素方法](#创建对象及添加元素方法)
         - [String](#string)
             - [字符串常量池](#字符串常量池)
             - [equals](#equals)
@@ -76,6 +80,14 @@
         - [向下转型](#向下转型)
         - [instaceof](#instaceof)
     - [泛型](#泛型)
+    - [常见的数据结构](#常见的数据结构)
+        - [栈](#栈)
+        - [队列](#队列)
+        - [数组](#数组)
+        - [链表](#链表)
+            - [单向链表](#单向链表)
+            - [双向链表](#双向链表)
+        - [红黑树](#红黑树)
 
 <!-- /TOC -->
 # java
@@ -282,7 +294,8 @@ java中单引号表示字符，双引号表示字符串
     r.nextInt();    //返回int范围内随机数
     r.nextInt(3);   //范围0~2
 
-### ArrayList
+### List
+#### ArrayList
 java.util.ArrayList 是大小可变的数组的实现，存储在内的数据称为元素。此类提供一些方法来操作内部存储的元素。ArrayList中可不断添加元素，其大小也自动增长。
 **泛型**也就是集合中的所有元素都是同一个的类型，泛型只能是**引用类型**
 
@@ -310,6 +323,51 @@ java.util.ArrayList 是大小可变的数组的实现，存储在内的数据称
     ArrayList<Integer> list = ArrayList<>();
     list.add(100);
 
+
+##### 获取元素
+
+    List<String> list = new ArrayList<>();
+    list.add("倚天剑");
+    list.add("屠龙刀");
+    System.out.println(list);
+
+    //使用普通的for循环
+    for (int i = 0; i < list.size(); i++) {
+        System.out.println(list.get(i));
+    }
+    //使用迭代器
+    Iterator<String> it = list.iterator();
+    while(it.hasNext()){
+        String s = it.next();
+        System.out.println(s);
+    }
+    // 增强for循环
+    for(String s : list){
+        System.out.println(s);
+    }
+
+####  LinkedList
+list接口的链表列表实现
+##### 创建对象及添加元素方法
+
+    //创建Linked集合，不能使用多态
+    LinkedList<String> linked = new LinkedList<>();
+
+    //使用add的方法添加元素
+    linked.add("火焰刀");
+    linked.add("玄铁剑");
+
+    //使用addFirst将元素插入列表的开头
+    //等效push方法
+    linked.addFirst("倚天剑");
+    linked.push("屠龙刀");
+
+    //addLast将指定的元素添加到集合末尾
+    //等效add方法
+    linked.addLast("碧血剑");
+    linked.add("圣火令");
+
+    
 ### String
 字符串的特点：
 + 字符串的内容永不可变
@@ -683,3 +741,26 @@ ArraryList<E>
 创建集合对象使用泛型的好处：
 1. 避免了数据类型转换的麻烦，存储的是什么类型，取出的就是什么类型
 2. 把运行期的异常提升到编译期的异常
+
+## 常见的数据结构
+### 栈
+栈（stack）又称堆栈，它是运算受限的线性表，其限制是仅允许在标的一端进行插入和删除操作，不允许在其他位置进行添加、查找、删除等操作。
+栈的特点：先进后出
+### 队列
+队列的特点：先进先出
+### 数组
+数组（Array）是有序的元素序列，数组是在内存中开辟一段连续的空间，并在空间存放元素。
+数组的特点：
+1. 查找元素快：通过索引，可以快速存取指定位置的元素
+2. 增删元素慢：
+    1. 指定索引位置增加元素；需要创建一个新的数组，将指定新元素存储在指定索引位置，再把原数组元素根据索引，复制到新数组对应的索引位置
+### 链表
+链表（linked list）：由一系列结点node（链表中的每一个元素成为结点）组成，结点可以在运动时动态生成。每个结点包含两部分：一部分是存储元素的数据域，另一个是存储下一个结点地址的指针域。链表分为单向链表、双向链表。
+链表的特点：
+1. 查找元素慢
+2. 增删元素快
+#### 单向链表
+链表中只有一条链子，不能保证元素的顺序
+#### 双向链表
+链表中有两条链子，有一条专门记录元素的顺序，是一个有序的集合
+### 红黑树
