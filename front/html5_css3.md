@@ -23,6 +23,9 @@
         - [选择器优先级](#选择器优先级)
     - [字体属性](#字体属性)
     - [文本属性](#文本属性)
+    - [背景属性](#背景属性)
+        - [背景颜色](#背景颜色)
+        - [背景图片](#背景图片)
     - [css引入方式](#css引入方式)
         - [外部样式表](#外部样式表)
     - [Emmet语法](#emmet语法)
@@ -188,7 +191,14 @@ CSS是层叠样式（Cascading Style Sheets）的简称
 + text-indent 文本缩进
 + text-decoration 文本修饰 underline/none
 + line-height 行高
-
+tips:
+文字的行高等于盒子的高度，实现**当行文字垂直居中**，行高小于盒子的高度：文字偏上、行高大于盒子的高度：文字偏下
+## 背景属性
+### 背景颜色
+background-color: transparent | color
+### 背景图片
+background-image: none | url(url)
+属性描述了元素的背景图片。实际开发中常见logo或者装饰性的小图片或者超大的背景图片，优点是非常灵活便于控制位置。
 ## css引入方式
 + 行内样式表
 + 内部样式表
