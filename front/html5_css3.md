@@ -26,6 +26,11 @@
     - [背景属性](#背景属性)
         - [背景颜色](#背景颜色)
         - [背景图片](#背景图片)
+        - [背景平铺](#背景平铺)
+        - [背景图片位置](#背景图片位置)
+        - [背景图像固定（背景附着）](#背景图像固定背景附着)
+        - [背景属性复合属性](#背景属性复合属性)
+        - [背景颜色半透明](#背景颜色半透明)
     - [css引入方式](#css引入方式)
         - [外部样式表](#外部样式表)
     - [Emmet语法](#emmet语法)
@@ -199,6 +204,25 @@ background-color: transparent | color
 ### 背景图片
 background-image: none | url(url)
 属性描述了元素的背景图片。实际开发中常见logo或者装饰性的小图片或者超大的背景图片，优点是非常灵活便于控制位置。
+### 背景平铺
+background-repeat: repeat | no-repeat | repeat-x | repeat-y
+### 背景图片位置
+利用backgyound-position属性可以改变图片在背景中的位置
+background-position: x y;
+参数代表的意思是：x坐标和y坐标。可以使用方位名词和精确单位
+参数值：
+length 百分数|由浮点数字和单位标识符组成的长度值
+position top | center | left | center | right
+### 背景图像固定（背景附着）
+background-attachment: scroll | fixed
+属性设置背景图像是否固定或者随着页面的其余部分滚动
+### 背景属性复合属性
+顺序没有要求，一般写作：
+background: 背景颜色 背景图片地址 背景平铺 背景图像滚动 背景图片位置;
+### 背景颜色半透明
+background: rgba(0, 0, 0, 0.3);
+最后一个参数是alpha透明度，取值范围0~1之间
+
 ## css引入方式
 + 行内样式表
 + 内部样式表
