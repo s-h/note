@@ -46,6 +46,14 @@
             - [行内元素](#行内元素)
             - [行内块元素](#行内块元素)
             - [元素显示模式转换](#元素显示模式转换)
+    - [盒子模型](#盒子模型)
+        - [盒子模型的组成](#盒子模型的组成)
+            - [border](#border)
+            - [padding](#padding)
+            - [margin](#margin)
+                - [外边距典型应用](#外边距典型应用)
+                - [嵌套块元素垂直外边距的塌陷](#嵌套块元素垂直外边距的塌陷)
+                - [清除内外边距](#清除内外边距)
 
 <!-- /TOC -->
 
@@ -307,3 +315,57 @@ css基本采取简写的形式使用tab进行补全
 2. 转换成行内元素 display: inline;
 3. 转换为行内块元素 display: inline-block;
 
+## 盒子模型
+页面布局的三大核心：盒子模型、浮动、定位
+### 盒子模型的组成
++ border边框
++ content内容
++ padding内边距
++ margin外边距
+#### border
+盒子边框大小，设置盒子边框会影响盒子实际大小
+border: border-width || border-style || border-color
+border-style: solid（实线）| dashed（虚线）| dotted（点线）
+border-top 上边框
+border-bottom 下边框
+border-collapse: collapse 合并相邻的边框
+#### padding
+padding: 内边距，设置内边距会影响盒子实际大小
+如果盒子本身没有设置高度宽度，padding不影响盒子大小
+padding-left
+padding-right
+padding-top
+padding-bottom
+
+padding复合写法：属性可以有一到四个值
++ padding: 5px;  代表上下左右
++ padding: 5px 10px; 代表上下5，左右10
++ padding: 5px 10px 20px; 代表上5 左右10 下20
++ pading: 5px 10px 20px 30px; 上 右 下 左o
+
+#### margin
+margin属性用于设置外边距，即控制盒子和盒子之间的距离
+margin-left
+margin-right
+margin-top
+margin-bottom
+
+margin复合写法与padding一致
+
+##### 外边距典型应用
+外边距盒子可以让块级盒子**水平居中**，但是必须满足两个条件：
++ 盒子必须指定了宽度（width）
++ 盒子左右的外边距都设置为auto
+
+    margin: 0 auto;
+
+##### 嵌套块元素垂直外边距的塌陷
+对于两个嵌套关系（父子关系）的块元素，父元素有上外边距同时子元素也有上外边距，此时父元素会探险比较大的外边距值
+解决方案：
++ 可为父元素定义上边框  border: 1px solid transparent
++ 可为父元素定义上内边距 padding: 1px
++ 可以为父元素添加overflow:hidden
+还有其他方法，比如浮动、固定，绝对定位的盒子不会有塌陷问题
+
+##### 清除内外边距
+网页元素很多都带有默认的内外边距，而且不同浏览器默认的也不一致。因此我们在布局前，首先要清除下网也元素的内外边距
