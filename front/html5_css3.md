@@ -68,6 +68,7 @@
                     - [父级添加after属性](#父级添加after属性)
                     - [父级添加双伪元素](#父级添加双伪元素)
         - [定位](#定位)
+    - [css书写顺序](#css书写顺序)
 
 <!-- /TOC -->
 
@@ -511,4 +512,27 @@ clear: left | right | both;
 + 缺点：照顾低版本浏览器
 + 代表网站：百度、淘宝、网易
 ###### 父级添加双伪元素
+也是给腹肌元素添加
+
+    .clearfix:before,.clearfix:after {
+        content: "",
+        display:table;
+    }
+
+    .clearfix:after {
+        clear:both;
+    }
+
+    .clearfix {
+        *zoom:1;
+    }
+
++ 优点：代码更简洁
++ 缺点：照顾低版本浏览器
++ 代表网站：小米、腾讯等
 ### 定位
+## css书写顺序
+1. 布局定位属性：display/position/float/clear/visibility/overflow
+2. 自身属性：width/height/margin/padding/border/background
+3. 文本属性：color/font/text-decoration/text-align/vertical-align/white-space/break-word
+4. 其他属性（css3）：content/cursor/border-radius/box-shadow/text-shadow/background:linear-gradient`
