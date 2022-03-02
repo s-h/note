@@ -27,22 +27,22 @@ wait_for_completion 将参数设置为false会执行一些预执行检查，启�
 #### 配置nfs
 服务端：
 
-  apt-get install nfs-kernerl-server nfs-common
-  #编辑配置文件sudo vi /etc/exports
-  /es_snapshot x.x.x.x/24(rw,sync,all_squash)  
-  chown nobody.nogroup /es_snapshot
-  /etc/init.d/nfs-kernel-server restart
+    apt-get install nfs-kernerl-server nfs-common
+    #编辑配置文件sudo vi /etc/exports
+    /es_snapshot x.x.x.x/24(rw,sync,all_squash)  
+    chown nobody.nogroup /es_snapshot
+    /etc/init.d/nfs-kernel-server restart
 
 客户端：
 
-  apt-get install nfs-common
-  mount -t nfs x.x.x.x/es_snapshot /nfs_share
+    apt-get install nfs-common
+    mount -t nfs x.x.x.x/es_snapshot /nfs_share
 
 #### 设置挂载点
 所有节点挂载文件系统/nfs_share(名称自定义)
 编辑elasticsearch.yml增加:
 
-  path.repo: ["/nfs_share"]
+    path.repo: ["/nfs_share"]
 
 #### 设置仓库
 创建名为my_bakcup的仓库，仓库的类型为共享文件系统，并设置挂载点。
