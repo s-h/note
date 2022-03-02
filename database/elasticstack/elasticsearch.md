@@ -24,19 +24,37 @@ wait_for_completion 将参数设置为false会执行一些预执行检查，启�
 
 ### snapshot
 快照适用于数据备份以及大量数据迁移
-创建名为my_bakcup的仓库，仓库的类型为共享文件系统，并设置挂载点。共享文件需要所有节点都可访问。
+#### 配置nfs
+服务端：
+
+  apt-get install nfs-kernerl-server nfs-common
+  #编辑配置文件sudo vi /etc/exports
+  /es_snapshot x.x.x.x/24(rw,sync,all_squash)  
+  chown nobody.nogroup /es_snapshot
+  /etc/init.d/nfs-kernel-server restart
+
+客户端：
+
+  apt-get install nfs-common
+  mount -t nfs x.x.x.x/es_snapshot /nfs_share
+
+#### 设置挂载点
+所有节点挂载文件系统/nfs_share(名称自定义)
+编辑elasticsearch.yml增加:
+
+  path.repo: ["/nfs_share"]
+
+#### 设置仓库
+创建名为my_bakcup的仓库，仓库的类型为共享文件系统，并设置挂载点。
+
 
     PUT _snapshot/my_backup/
     {
         "type": "fs",
         "settings": {
-            "location": "/mount/backups/my_backup"
+            "location": "/nfs_share/backups/my_backup"
         }
     }
-
-还需要在es配置文件配置path.repo参数，并重启es节点：
-
-    path.repo:["/mount/backups/my_bakcup"]
 
 修改仓库流量控制参数，必须在仓库未使用时配置：
 
@@ -44,12 +62,12 @@ wait_for_completion 将参数设置为false会执行一些预执行检查，启�
     {
         "type": "fs",
         "settings": {
-            "location": "/mount/backups/my_backup",
+            "location": "/nfs_share/backups/my_backup",
             "max_snapshot_bytes_per_sec" : "50mb",
             "max_restore_bytes_per_sec" : "50mb"
         }
     }
-
+#### 生成快照
 生成快照并制定索引
 
     PUT _snapshot/my_backup/snapshot_2
@@ -67,6 +85,7 @@ wait_for_completion 将参数设置为false会执行一些预执行检查，启�
 
     DELETE _snapshot/my_backup/snapshot_2
 
+#### 恢复快照
 恢复快照/指定索引
 
     POST _snapshot/my_backup/snapshot_1/_restore
