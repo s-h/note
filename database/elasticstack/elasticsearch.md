@@ -209,3 +209,8 @@ low
                 }
                 }]
     }
+
+## curl
+### 使用用户名密码访问
+
+    curl --user ops:user@password http://192.168.1.100:9200/_cat/
