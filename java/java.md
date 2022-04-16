@@ -1,6 +1,8 @@
 <!-- TOC -->
 
 - [java](#java)
+    - [基本概念](#基本概念)
+        - [JVM、JRE与JDK](#jvmjre与jdk)
     - [数据类型](#数据类型)
         - [基本数据类型](#基本数据类型)
         - [引用数据类型](#引用数据类型)
@@ -91,6 +93,13 @@
 
 <!-- /TOC -->
 # java
+##  基本概念
+### JVM、JRE与JDK
+JVM (Java Virtual Machine)就是一个虚拟的用于执行bytecode字节码的"虚拟计算机"。
+JRE (Java Runtime Environment)包含：Java虚拟机、库函数、运行Java应用程序必须的文件。
+JDK (Java Development Kit)包含：JRE以及增加编译器和调试器等用于程序开发的文件。
+
+如果只是运行java程序，只需要
 ## 数据类型
 ### 基本数据类型
 + 整数型（byte short int long）
@@ -113,13 +122,13 @@ java中单引号表示字符，双引号表示字符串
 静态初始化没有指定长度，自动计算长度
 静态初始化标准格式：
 
-    数据类型 [] 数组名称 = new 数据类型[] {元素1, 元素2, ,,,}
+    数据类型[] 数组名称 = new 数据类型[] {元素1, 元素2, ,,,}
     int[] myArray2 = new int[]{5, 10, 15};
     String[] myArray3 = new String[]{"hello", "world"};
 
 静态初始化省略格式：
 
-    数据类型 [] 数组名称 = {元素1, 元素2, ,,,}
+    数据类型[] 数组名称 = {元素1, 元素2, ,,,}
     int[] myArray2 = {5, 10, 15};
     String[] myArray3 = {"hello", "world"};
 
