@@ -1,0 +1,2 @@
+# 产品介绍
+开源大数据开发平台EMR构建于云服务器ECS上，基于开源的Apache Hadoop和Apache Spark，方便地使用Hadoop和Spark生态系统中的其他周边系统分析和处理数据。
