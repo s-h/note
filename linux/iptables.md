@@ -1,4 +1,5 @@
 # conntrack
+conntrack用于跟踪连接状， nat根据连接状态进行回包。
 ## 安装
 
     apt-get install conntrack
@@ -9,10 +10,15 @@
     conntrack -L  查看连接跟踪条目
 
 ## udp连接超时时间
+conntrack 状态：
+[ASSURED]: 在两个方面（即请求和响应）方向都看到了流量
+[UNREPLIED]: 尚未在响应方向上看到流量。如果连接跟踪缓存溢出，则首先删除这些连接
+
 net.netfilter.nf_conntrack_udp_timeout = 30
 net.netfilter.nf_conntrack_udp_timeout_stream = 180
 
 ### 测试机器
+Ubuntu 16.04.7 LTS  4.4.0-190-generic
 192.168.9.11 (后端服务端口25000)
 192.168.9.12 (nat)
 192.168.9.13 (客户机)
@@ -27,9 +33,9 @@ net.netfilter.nf_conntrack_udp_timeout_stream = 180
 
     #步骤一： 192.168.9.13执行：(使用12345源端口向192.168.9.12 25000发送一个udp包)
         echo -n "hello" | nc -4u -w1 192.168.9.12 25000 -p 12345
-    #步骤二： 192.168.9.11:
+    #步骤二： 192.168.9.11:(模拟服务端相应给iptables)
         echo -n "hello" | nc -4u -w1 192.168.9.12 12345 -p 25000
-    #步骤三： 192.168.9.13:
+    #步骤三： 192.168.9.13:(模拟客户端再次请求，无需响应此时iptables连接表已变更为[ASSURED])
         echo -n "hello" | nc -4u -w1 192.168.9.12 25000 -p 12345
 
     # iptables查看：
