@@ -39,7 +39,7 @@
     sudo add-apt-repository "deb [arch=amd64] https://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
     # Step 4: 更新并安装Docker-CE
     sudo apt-get -y update
-    sudo apt-get -y install docker-ce
+    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
 #### kubernetes
 
