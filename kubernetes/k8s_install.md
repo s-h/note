@@ -1,3 +1,20 @@
+<!-- TOC -->
+
+- [环境](#环境)
+- [前期准备](#前期准备)
+    - [源配置](#源配置)
+        - [apt源](#apt源)
+        - [docker-ce](#docker-ce)
+        - [kubernetes](#kubernetes)
+        - [docker镜像](#docker镜像)
+- [master节点安装](#master节点安装)
+    - [查看组件状态](#查看组件状态)
+- [node节点安装](#node节点安装)
+- [命令补全](#命令补全)
+- [报错排查](#报错排查)
+    - [unknown service runtime.v1alpha2.RuntimeService](#unknown-service-runtimev1alpha2runtimeservice)
+
+<!-- /TOC -->
 ## 环境
 + os: Ubuntu 20.04 LTS
 + master: 192.168.162.71
@@ -80,3 +97,21 @@
 
 ## 命令补全
 source <(kubectl completion bash)
+
+## 报错排查
+### unknown service runtime.v1alpha2.RuntimeService
+版本：
++ OS Ubuntu 20.04.4 LTS 
++ docker docker-ce 20.10.15~3-0~ubuntu-focal
++ kubeadm 1.24.0
+报错信息
+
+    [preflight] Some fatal errors occurred:
+	[ERROR CRI]: container runtime is not running: output: time="2022-05-07T06:51:48Z" level=fatal msg="getting status of runtime: rpc error: code = Unimplemented desc = unknown service runtime.v1alpha2.RuntimeService"
+    , error: exit status 1
+
+解决：
+https://github.com/kubernetes-sigs/cri-tools/issues/710
+
+    rm /etc/containerd/config.toml
+    systemctl restart containerd
