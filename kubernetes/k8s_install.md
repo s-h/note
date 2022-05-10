@@ -94,6 +94,14 @@
     --discovery-token-ca-cert-hash sha256:4b930bdffc81c3f301979c2ecc2a4167555799e36f897f015c4192eaf4d41ed1
 
 
+## 网络插件
+### weave
+
+    kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+    kubectl get pods --all-namespaces
+
+
+
 
 ## 命令补全
 source <(kubectl completion bash)
