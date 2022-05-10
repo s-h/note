@@ -14,11 +14,11 @@ topic下的一个分区只能被同一个consumer group下的一个consumer线�
 
 ### 查看所有消费组
 
-    ./kafka-consumer-groups.sh --bootstrap-server x.x.x.x:9092 --all-groups
+    ./kafka-consumer-groups.sh --bootstrap-server x.x.x.x:9092 --list
 
 ### 查看消费组详情
 
-    ./kafka-consumer-groups.sh --bootstrap-server x.x.x.x:9092 --describe --group terminal-group
+    ./kafka-consumer-groups.sh --bootstrap-server x.x.x.x:9092 --describe --group group_name
 
 #### 创建topic
 
