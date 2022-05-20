@@ -1,3 +1,23 @@
+<!-- TOC -->
+
+- [基本命令](#基本命令)
+    - [查看pod和工作节点](#查看pod和工作节点)
+        - [使用kubectl进行故障排除](#使用kubectl进行故障排除)
+        - [修改节点roles](#修改节点roles)
+        - [允许pod调度到master节点](#允许pod调度到master节点)
+    - [cluster details](#cluster-details)
+    - [Deploy an app](#deploy-an-app)
+        - [发布应用](#发布应用)
+        - [查看应用](#查看应用)
+    - [查看pod和工作节点](#查看pod和工作节点)
+        - [pod](#pod)
+        - [work node](#work-node)
+- [服务](#服务)
+    - [服务类型](#服务类型)
+        - [NodePort](#nodeport)
+        - [LoadBalancer](#loadbalancer)
+
+<!-- /TOC -->
 ## 基本命令
 ### 查看pod和工作节点
 #### 使用kubectl进行故障排除
