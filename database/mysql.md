@@ -1,56 +1,61 @@
 <!-- TOC -->
 
-- [1. mysql](#1-mysql)
-    - [1.1. 维护命令](#11-维护命令)
-        - [1.1.1. 查看mysql版本](#111-查看mysql版本)
-        - [1.1.2. 查看引擎](#112-查看引擎)
-        - [1.1.3. 查看binlog](#113-查看binlog)
-        - [1.1.4. binlog刷新时机](#114-binlog刷新时机)
-        - [1.1.5. 查看连接](#115-查看连接)
-        - [1.1.6. 查看正在执行的语句](#116-查看正在执行的语句)
-        - [1.1.7. 锁表](#117-锁表)
-    - [1.2. 问题处理](#12-问题处理)
-        - [1.2.1. 解决MySQL非聚合列未包含在GROUP BY子句报错问题](#121-解决mysql非聚合列未包含在group-by子句报错问题)
-    - [1.3. mysqludmp](#13-mysqludmp)
-    - [1.4. database](#14-database)
-        - [1.4.1. 创建数据库](#141-创建数据库)
-        - [1.4.2. 赋权](#142-赋权)
-        - [1.4.3. 刷新权限](#143-刷新权限)
-    - [1.5. 导入数据](#15-导入数据)
-        - [1.5.1. 导入gz格式数据](#151-导入gz格式数据)
+- [mysql](#mysql)
+    - [维护命令](#维护命令)
+        - [查看mysql版本](#查看mysql版本)
+        - [查看引擎](#查看引擎)
+        - [查看binlog](#查看binlog)
+        - [binlog刷新时机](#binlog刷新时机)
+        - [查看连接](#查看连接)
+        - [查看正在执行的语句](#查看正在执行的语句)
+        - [锁表](#锁表)
+    - [问题处理](#问题处理)
+        - [解决MySQL非聚合列未包含在GROUP BY子句报错问题](#解决mysql非聚合列未包含在group-by子句报错问题)
+    - [mysqludmp](#mysqludmp)
+    - [database](#database)
+        - [创建数据库](#创建数据库)
+        - [赋权](#赋权)
+        - [刷新权限](#刷新权限)
+    - [导入数据](#导入数据)
+        - [导入gz格式数据](#导入gz格式数据)
+    - [查询数据结构](#查询数据结构)
 
 <!-- /TOC -->
-# 1. mysql
-## 1.1. 维护命令
-### 1.1.1. 查看mysql版本
+
+# mysql
+
+## 维护命令
+
+### 查看mysql版本
 
     SELECT version();
 
-### 1.1.2. 查看引擎
+### 查看引擎
 suport字段为DEFAULT的为默认引擎
 
     show engines;
 
-### 1.1.3. 查看binlog
+### 查看binlog
 
     # 是否开启binlog
     show variables like '%log_bin%';
     # binlog详细信息
     show global variables like '%log%';
 
-### 1.1.4. binlog刷新时机
+### binlog刷新时机
 如果设置为0，则表示MySQL不控制binlog的刷新，由文件系统去控制它缓存的刷新；
 如果设置为不为0的值，则表示每 sync_binlog 次事务，MySQL调用文件系统的刷新操作刷新binlog到磁盘中。
 设为1是最安全的，在系统故障时最多丢失一个事务的更新，但是会对性能有所影响。
-### 1.1.5. 查看连接
+
+### 查看连接
 
     SELECT substring_index(host, ':',1) AS host_name,state,count(*) FROM information_schema.processlist GROUP BY state,host_name;
 
-### 1.1.6. 查看正在执行的语句
+### 查看正在执行的语句
 
     show full processlist;
 
-### 1.1.7. 锁表
+### 锁表
 
     # 查看锁表 
     # 返回Table_locks_immediate结果，意思是表被锁了总数
@@ -60,8 +65,9 @@ suport字段为DEFAULT的为默认引擎
     # InnoDB_row_lock行锁的争夺情况
     # show status like 'innodb_row_lock%';
 
-## 1.2. 问题处理
-### 1.2.1. 解决MySQL非聚合列未包含在GROUP BY子句报错问题
+## 问题处理
+
+### 解决MySQL非聚合列未包含在GROUP BY子句报错问题
 执行类似以下mysql查询，
 
     SELECT id, name, count(*) AS cnt FROM case_table GROUP BY name
@@ -74,14 +80,15 @@ suport字段为DEFAULT的为默认引擎
 
     sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION 
 
-## 1.3. mysqludmp
+## mysqludmp
 
-## 1.4. database
-### 1.4.1. 创建数据库
+## database
+
+### 创建数据库
 
     create database dbname character set utf8 collate utf8_bin; 
 
-### 1.4.2. 赋权
+### 赋权
 
     # 指定数据库、用户、远程地址、密码
     grant all privileges on dbname.* to user_name@localhost identified by 'user_password'; 
@@ -106,10 +113,29 @@ suport字段为DEFAULT的为默认引擎
 
     ALTER USER 'user_name'@'%' IDENTIFIED WITH mysql_native_password BY 'user_password';
 
-### 1.4.3. 刷新权限
+### 刷新权限
 
     FLUSH PRIVILEGES;
 
-## 1.5. 导入数据
-### 1.5.1. 导入gz格式数据
+## 导入数据
+
+### 导入gz格式数据
     zcat create.sql.gz | mysql -uroot -p zabbixdb
+
+## 查询数据结构
+
+    SELECT
+        TABLE_SCHEMA 库名,
+        TABLE_NAME 表名,
+        COLUMN_NAME 列名,
+        COLUMN_TYPE 数据类型,
+        DATA_TYPE 字段类型,
+        CHARACTER_MAXIMUM_LENGTH 长度,
+        IS_NULLABLE 是否为空,
+        COLUMN_DEFAULT 默认值,
+        COLUMN_COMMENT 备注
+    FROM
+        INFORMATION_SCHEMA. COLUMNS 
+    WHERE
+        -- -- database_name为数据库名称，到时候只需要修改成你要导出表结构的数据库即可
+        table_schema ='database_name'
