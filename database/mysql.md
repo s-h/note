@@ -79,6 +79,10 @@ suport字段为DEFAULT的为默认引擎
 解决，修改mysql配置，添加：
 
     sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION 
+## 索引
+### 查看未使用索引语句
+
+    set @@global.log_queries_not_using_indexes=ON;
 
 ## mysqludmp
 
