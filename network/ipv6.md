@@ -10,3 +10,7 @@
 ## 获取路由
 
     dhcpclient -6 eth0
+
+## 临时添加ipv6地址
+
+    ip -6 addr add xxx/64 dev eth0
