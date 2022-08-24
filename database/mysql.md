@@ -11,6 +11,8 @@
         - [锁表](#锁表)
     - [问题处理](#问题处理)
         - [解决MySQL非聚合列未包含在GROUP BY子句报错问题](#解决mysql非聚合列未包含在group-by子句报错问题)
+    - [索引](#索引)
+        - [查看未使用索引语句](#查看未使用索引语句)
     - [mysqludmp](#mysqludmp)
     - [database](#database)
         - [创建数据库](#创建数据库)
@@ -19,6 +21,8 @@
     - [导入数据](#导入数据)
         - [导入gz格式数据](#导入gz格式数据)
     - [查询数据结构](#查询数据结构)
+    - [查看数据大小](#查看数据大小)
+    - [查看所有表大小](#查看所有表大小)
 
 <!-- /TOC -->
 
@@ -143,3 +147,36 @@ suport字段为DEFAULT的为默认引擎
     WHERE
         -- -- database_name为数据库名称，到时候只需要修改成你要导出表结构的数据库即可
         table_schema ='database_name'
+
+## 查看数据大小
+
+    SELECT
+        table_schema AS '数据库',
+        sum(table_rows) AS '记录数',
+        sum(
+            TRUNCATE (data_length / 1024 / 1024, 2)
+        ) AS '数据容量(MB)',
+        sum(
+            TRUNCATE (index_length / 1024 / 1024, 2)
+        ) AS '索引容量(MB)'
+    FROM
+        information_schema. TABLES
+    GROUP BY
+        table_schema
+    ORDER BY
+        sum(data_length) DESC,
+        sum(index_length) DESC;
+
+## 查看所有表大小
+
+    SELECT
+        table_schema AS '数据库',
+        table_name AS '表名',
+        table_rows AS '记录数',
+        TRUNCATE (data_length / 1024 / 1024, 2) AS '数据容量(MB)',
+        TRUNCATE (index_length / 1024 / 1024, 2) AS '索引容量(MB)'
+    FROM
+        information_schema. TABLES
+    ORDER BY
+        data_length DESC,
+        index_length DESC;
