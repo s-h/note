@@ -39,6 +39,7 @@
         - [添加用户](#添加用户)
     - [java](#java)
     - [redis](#redis)
+    - [定时任务](#定时任务)
 
 <!-- /TOC -->
 ## docker
@@ -206,3 +207,9 @@ cpu、内存、存储、网络统计信息
     touch /data/docker/redis/logs/redis.log
 
     docker run -it -d --name redis -p 6379:6379 -v /data/docker/redis/conf/redis.conf:/etc/redis/redis.conf -v /data/docker/redis/logs/redis.log:/var/log/redis.log -v  /data/docker/redis/data/:/data redis:5.0.7 redis-server /etc/redis/redis.conf --appendonly yes
+
+### 定时任务
+使用定时任务运行docker 不需要加-it参数，否则会报：the input device is not a TTY
+
+-i 以交互模式运行容器
+-t 为容器重新分配一个伪输入终端
