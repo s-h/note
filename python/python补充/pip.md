@@ -12,7 +12,11 @@
     [install]
     trusted-host = https://mirrors.aliyun.com
 
+### 修复
+使用apt-get安装的pip与当前版本不匹配，可以使用以下命令安装pip
 
+    wget https://bootstrap.pypa.io/get-pip.py --no-check-certificate
+    python3 get-pip.py
 
 ## windows
 ### 永久修改
