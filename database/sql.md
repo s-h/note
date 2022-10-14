@@ -255,6 +255,9 @@ SELECT语句必须遵循以下次序:
     ORDER BY cust_name;
 
 ## 1.8. 联结表
+[join类型总结图](./image/sql_join.webp)
+
+[join类型总结图2](./image/sql_join2.webp)
 ### 1.8.1. 创建联结
 创建联结非常简单，指定要联结的所有表以及关联它们的方式即可。
 
