@@ -4,4 +4,8 @@
 
 # 只用ipv4
 
-    pt-get -o Acquire::ForceIPv4=true    
+    apt-get -o Acquire::ForceIPv4=true    
+
+# 安装指定版本
+
+    apt-get install <<package name>>=<<version>>
