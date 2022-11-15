@@ -23,3 +23,7 @@ topic下的一个分区只能被同一个consumer group下的一个consumer线�
 #### 创建topic
 
     ./kafka-topics.sh --create --bootstrap-server x.x.x.x:9092  --replication-factor 2 --partitions 3 --topic topic_name
+
+#### 删除topic
+
+    ./kafka-topics.sh --delete --bootstrap-server x.x.x.x:9092 --topic topic_name
