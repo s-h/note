@@ -9,10 +9,17 @@
         - [docker镜像](#docker镜像)
 - [master节点安装](#master节点安装)
     - [查看组件状态](#查看组件状态)
+    - [忽略报错](#忽略报错)
 - [node节点安装](#node节点安装)
+- [网络插件](#网络插件)
+    - [flannel](#flannel)
+    - [weave](#weave)
+- [ingress安装](#ingress安装)
+    - [nginx ingress](#nginx-ingress)
 - [命令补全](#命令补全)
 - [报错排查](#报错排查)
     - [unknown service runtime.v1alpha2.RuntimeService](#unknown-service-runtimev1alpha2runtimeservice)
+    - [\"systemd\" is different from docker cgroup driver: \"cgroupfs\""](#\systemd\-is-different-from-docker-cgroup-driver-\cgroupfs\)
 
 <!-- /TOC -->
 ## 环境
@@ -77,14 +84,15 @@
 
     export KUBECONFIG=/etc/kubernetes/admin.conf
 
-    kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-
-    安装flannel插件
-    docker pull registry.aliyuncs.com/google_containers/flannel:v1.18.2-amd64
 
 ### 查看组件状态
 
     kubectl get cs
+
+### 忽略报错
+--ignore-preflight-errors strings   忽略前置检查错误，被忽略的错误将被显示为警告. 
+
+例子: 'IsPrivilegedUser,Swap,NumCPU'. Value 'all' ignores errors from all checks.
 
 ## node节点安装
 
@@ -93,15 +101,22 @@
     kubeadm join 192.168.162.71:6443 --token v9yil9.29mxuw3x8r0yj56t \
     --discovery-token-ca-cert-hash sha256:4b930bdffc81c3f301979c2ecc2a4167555799e36f897f015c4192eaf4d41ed1
 
-
 ## 网络插件
+### flannel
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+安装flannel插件
+docker pull registry.aliyuncs.com/google_containers/flannel:v1.18.2-amd64
 ### weave
 
     kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
     kubectl get pods --all-namespaces
 
+## ingress安装
+### nginx ingress
+https://github.com/kubernetes/ingress-nginx/blob/main/README.md#readme
 
-
+[快速安装](https://kubernetes.github.io/ingress-nginx/deploy/)
 
 ## 命令补全
 source <(kubectl completion bash)
@@ -123,3 +138,21 @@ https://github.com/kubernetes-sigs/cri-tools/issues/710
 
     rm /etc/containerd/config.toml
     systemctl restart containerd
+
+### \"systemd\" is different from docker cgroup driver: \"cgroupfs\""
+版本:
++ OS Ubuntu 20.04.4 LTS
++ docker docker-c 5:20.10.21~3-0~ubuntu-focal
++ kubelet kubelet 1.23.14-00
+
+报错信息：
+
+    kubelet无法启动：
+    "Failed to run kubelet" err="failed to run Kubelet: misconfiguration: kubelet cgroup driver: \"systemd\" is different from docker cgroup driver: \"cgroupfs\""
+
+解决：
+https://www.cnblogs.com/hellxz/p/kubelet-cgroup-driver-different-from-docker.html
+
+    /etc/docker/daemon.json中，添加"exec-opts": ["native.cgroupdriver=systemd"]
+    systemctl daemon-reload
+    systemctl restart docker
