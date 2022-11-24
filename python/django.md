@@ -1,3 +1,34 @@
+<!-- TOC -->
+
+- [快速开始](#快速开始)
+    - [查看版本](#查看版本)
+    - [MVC设计模式](#mvc设计模式)
+    - [MTV设计模式](#mtv设计模式)
+    - [创建一个项目](#创建一个项目)
+    - [启动django](#启动django)
+    - [创建应用](#创建应用)
+    - [创建模型(model)](#创建模型model)
+    - [启用模型](#启用模型)
+    - [创建管理员账号](#创建管理员账号)
+- [详细讲解](#详细讲解)
+    - [ORM](#orm)
+        - [安装依赖](#安装依赖)
+        - [配置mysql](#配置mysql)
+    - [model](#model)
+        - [默认值](#默认值)
+        - [同步数据库](#同步数据库)
+        - [新增数据](#新增数据)
+    - [视图](#视图)
+        - [请求](#请求)
+        - [响应](#响应)
+    - [模板](#模板)
+        - [模板的语法](#模板的语法)
+    - [静态文件](#静态文件)
+        - [引用静态文件](#引用静态文件)
+
+<!-- /TOC -->
+
+## 快速开始
 ### 查看版本
     >>> import django
     >>> print(django.get_version())
@@ -61,5 +92,163 @@ app的存放文职可以是任何地点，通常放在manage.py脚本的同级�
 
     $ python manager.py createsuperuser
 
+
+## 详细讲解
+### ORM
+ORM可以做帮助我们做两件事情
++ 创建、修改、删除数据库中的表（不用写SQL语句）【无法创建数据库】
++ 操作表中的数据（不用写SQL语句）
+#### 安装依赖
+
+    pip install mysqlclient
+
+#### 配置mysql
+setting.py配置数据库
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': '',
+            'USER': '',
+            'PASSWORD': '',
+            'HOST': '',
+            'PORT': ''
+            }
+    }
+
+### model
+
+    from django.db import models
+
+    class UserInfo(models.Model):
+        name = models.CharField(max_length=32)
+        password = models.CharField(max_length=64)
+        age = models.IntegerField()
+
+    """
+    create tables appname_userinfo(
+        id bigint auto_increment primary key,
+        name varchar(32),
+        password varhcar(64),
+        age int
+    );
+    """
+#### 默认值
+已有表新增字段，需要设置默认值或者允许为空
+
+    #默认值
+    age = models.IntergerField(default=10)
+
+    #允许为空
+    age = models.InterField(null=True, blank=True)
+
+#### 同步数据库
+生成sql    
+
+    python manage.py makemigrations
+
+    #只生成指定appsql
+    python manage.py makemigrations app01
+
+
+执行sql
+
+    python manage.py migrate
+
+#### 新增数据
+
+    Model_name.objects.create(title="hello")
+
 ### 视图
 一个视图就是一个页面
+
+视图函数内部：
++ 读取含有模板语法的HTML文件
++ 内部进行渲染（模板语法执行并替换数据)
++ 将渲染完成的HTML返还给用户浏览器
+
+#### 请求
+request是一个对象，封装了用户发送过来的所有请求相关的数据
+
+    def something(request):
+        return Httpsponse("返回内容")
+
+获取请求方式GET/POST
+
+    request.method
+
+获取GET/POST请求数据
+
+    request.GET
+    request.POST
+    request.POST.get("user")
+
+#### 响应
+返回字符串
+
+    return HttpResponse("字符串")
+
+返回页面
+
+    return render(request, "index.html", {"title": "foo"})
+
+重定向
+
+    return redirect("https://www.foo.com")
+
+### 模板
+模板放在templates里面
+#### 模板的语法
+在html中写一些占位符，由数据对这些占位符进行替换和处理
+
+    views：
+    name = "zhangsan"
+    roles = ["admin", "user"]
+    user_info = {"name": "foo", "role": "admin"}
+    return render(request, "tpl.html", {"name": name, "roles": roles, "user_info": user_info})
+
+    tmplates：
+    -- 变量
+    {{ name }}
+
+    -- 列表
+    {% for item in roles %}
+       {{ item }}
+    {% endfor %}
+
+    -- 字典值
+    {{ user_info.name }}
+    {{ user_info.role }}
+
+    -- 循环字典 keys
+    {% for item in user_info.keys %}
+        {{ item }}
+    {% endfor %}
+
+    -- 循环字典 value
+    {% for item in user_info.values %}
+        {{ item }}
+    {% endfor %}
+
+    -- 循环字典 key、values
+    {% for k,v in user_info.items %}
+        {{ k }} {{ v }}
+    {% endfor %}
+
+    -- 条件分支
+    {% if name == "zhangsan"%}
+        <h1>zhangsan</h1>
+    {% else %}
+        <h1>who are you<h1>
+    {% endif %}
+
+
+### 静态文件
+静态文件放在statis里面
+#### 引用静态文件
+settings.py 中配置 STATIC_URL
+
+    -- html开头
+    {$ load statis %}
+    -- 在需要引用静态文件的地方
+    <img src="{% static 'js/jquery-3.6.0.min.js' %}" alt=""> 
