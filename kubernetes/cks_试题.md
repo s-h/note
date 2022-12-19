@@ -43,7 +43,7 @@ ServiceAccount 不自动挂载 API 凭据。
     查看已创建的sa
     $ kubectl get sa backend-sa -n qa -o yaml
 
-    # 修改/cks/sa/pod1.yaml中serviceAccountName为backend-STUB - 
+    # 修改/cks/sa/pod1.yaml中serviceAccountName为backend
     $ kubectl apply -f /cks/sa/pod1.yaml
 
     # 查看新创建的pod
@@ -99,12 +99,13 @@ NodeRestriction。
 的安全加固， kubectl 的配置将无法工作。 您可以使用位于 cluster 的 master 节点上，cluster 原本的
 kubectl 配置文件 /etc/kubernetes/admin.conf ，以确保经过身份验证的授权的请求仍然被允许。
 
+
     1.
     编辑/etc/kubernetes/manifests/kube-apiserver.yaml
     - --authorization-mode=Node,RBAC
     - --enable-admission-plugins=NodeRestriction
 
-    2.
+    2. （这个题先做第二步）
     $ kubectl get clusterrolebinding |grep anonymous
     $ kubectl delete clusterrolebinding system:anonymous
 
@@ -171,11 +172,11 @@ Pod 以在 gVisor 上运行。
     $ kubectl apply -f /cks/gVisor/rc.yaml
     
     # 查看ns server中的pod
-    $ kubectl -n server get deployment, pod
+    $ kubectl -n server get deployment,pod
     
     # 修改所有pod对应的deployment
     $ kubectl -n server edit deployment xxx
-    在spec下面添加：
+    在spec下面添加：(此处不成功)
       runtimeClass: untrusted
 
 # 7. Pod 安全策略-PSP
