@@ -20,7 +20,7 @@
 
 ### 查看队列内容
 
-    ./kafka-console-consumer.sh --bootstrap-server 10.24.0.212:9092 --topic topic_name --from-beginning
+    ./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic topic_name --from-beginning
 
 
 ### 删除队列
