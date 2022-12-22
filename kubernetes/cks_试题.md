@@ -176,8 +176,8 @@ Pod 以在 gVisor 上运行。
     
     # 修改所有pod对应的deployment
     $ kubectl -n server edit deployment xxx
-    在spec下面添加：(此处不成功)
-      runtimeClass: untrusted
+    在spec.spec下面添加：(此处需确认)
+      runtimeClassName: untrusted
 
 # 7. Pod 安全策略-PSP
 Context PodSecurityPolicy 应防在特定 namespace 中特权 Pod 的创建。 
