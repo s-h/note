@@ -308,18 +308,33 @@ Context 针对 kubeadm 创建的 cluster 运行 CIS 基准测试工具时， 发
 
 Task:
 通过配置修复所有问题并重新启动受影响的组件以确保新的设置生效。 
-修复针对 API 服务器发现的所有以下违规行为： 1.2.7 Ensure
-that the --authorization-mode argument is not set to AlwaysAllow 1.2.8
-Ensure that the --authorization-mode argument includes Node 1.2.9
-Ensure that the --authorization-mode argument includes RBAC 1.2.18
-Ensure that the --insecure-bind-address argument is not set 1.2.19
-Ensure that the --insecure-port argument is set to 0 FAIL FAIL FAIL
-FAIL FAIL 修复针对 kubelet 发现的所有以下违规行为： Fix all of the following
-violations that were found against the kubelet: 4.2.1 Ensure that the
-anonymous-auth argument is set to false 4.2.2 Ensure that the
-–authorization-mode argument is not set to AlwaysAllow FAIL FAIL 注意：尽可能使用 Webhook 身份验证/授权。 修复针对 etcd 发现的所有以下违规行为： Fix all of the
-following violations that were found against etcd: 2.2 Ensure that the
-–client-cert-auth argument is set to true FAIL
+
+修复针对 API 服务器发现的所有以下违规行为： 
+1.2.7 Ensure that the --authorization-mode argument is not set to AlwaysAllow 
+
+1.2.8 Ensure that the --authorization-mode argument includes Node 
+
+1.2.9 Ensure that the --authorization-mode argument includes RBAC 
+
+1.2.18 Ensure that the --insecure-bind-address argument is not set 
+
+1.2.19 Ensure that the --insecure-port argument is set to 0 
+
+
+FAIL FAIL 修复针对 kubelet 发现的所有以下违规行为： 
+Fix all of the following violations that were found against the kubelet: 
+
+4.2.1 Ensure that the anonymous-auth argument is set to false 
+
+4.2.2 Ensure that the –authorization-mode argument is not set to AlwaysAllow 
+
+
+注意：尽可能使用 Webhook 身份验证/授权。 
+
+修复针对 etcd 发现的所有以下违规行为： 
+Fix all of the following violations that were found against etcd: 
+
+2.2 Ensure that the –client-cert-auth argument is set to true 
 
 # 11. 网络策略 NetworkPolicy
 Task 创建一个名为 pod-restriction 的 NetworkPolicy 来限制对在 namespace dev-team
