@@ -336,8 +336,35 @@ Fix all of the following violations that were found against etcd:
 
 2.2 Ensure that the –client-cert-auth argument is set to true 
 
+    mkdir ~/bak
+    cp /etc/kubernetes/manifestes/kube-apiserver.yaml ~/bak/
+    cp /etc/kubernetes/manifestes/etcd.yaml ~/bak/
+    cp /var/lib/kubelet/config.yaml ~/bak/
+    
+    编辑 /etc/kubernetes/manifestes/kube-apiserver.yaml
+    修改 --authorization-mode=Node,RBAC
+    删除 --insecure-bind-address
+    删除 --insecure-port
+
+    编辑 /etc/kubernetes/manifestes/etcd.yaml
+    修改 --client-cert-auth=true
+
+    编辑 /var/lib/kubelet/config.yaml
+    authentication:
+      anonymous:
+        enabled: false
+
+    authrizathion:
+      mode: Webhook
+
+    $ systemctl daemon-reload
+    $ systemctl restart kubelet
+    $ kubectl get node
+    $ kubectl get pod -A
+
 # 11. 网络策略 NetworkPolicy
-Task 创建一个名为 pod-restriction 的 NetworkPolicy 来限制对在 namespace dev-team
+Task
+ 创建一个名为 pod-restriction 的 NetworkPolicy 来限制对在 namespace dev-team
 中运行的 Pod products-service 的访问。 只允许以下 Pod 连接到 Pod products-service 
 1 namespace qa 中的 Pod 2 位于任何 namespace，带有标签 environment: testing 的 Pod
 注意：确保应用 NetworkPolicy。 你可以在/cks/net/po.yaml 找到一个模板清单文件。
@@ -365,24 +392,93 @@ Task 使用 Trivy 开源容器扫描器检测 namespace kamino 中 Pod 使用的
 节点上， 在工作节点上不可使用。 你必须切换到 cluster 的 master 节点才能使用 Trivy
 
 # 15. 默认网络策略
-Context 一个默认拒绝（default-deny）的 NetworkPolicy 可避免在未定义任何其他 NetworkPolicy
-的 namespace 中 意外公开 Pod。 Task 为所有类型为 Ingress+Egress 的流量在 namespace
-testing 中创建一个名为 denypolicy 的新默认拒绝 NetworkPolicy。 此新的 NetworkPolicy
-必须拒绝 namespace testing 中的所有的 Ingress + Egress 流量。 将新创建的默认拒绝
-NetworkPolicy 应用与在 namespace testing 中运行的所有 Pod。 你可以在 /cks/net/p1.yaml
-找到一个模板清单文件。
+Context 一个默认拒绝（default-deny）的 NetworkPolicy 可避免在未定义任何其他 NetworkPolicy 的 namespace 中 意外公开 Pod。 
+
+Task
+为所有类型为 Ingress+Egress 的流量在 namespace testing 中创建一个名为 denypolicy 的新默认拒绝 NetworkPolicy。 
+此新的 NetworkPolicy 必须拒绝 namespace testing 中的所有的 Ingress + Egress 流量。 
+将新创建的默认拒绝 NetworkPolicy 应用与在 namespace testing 中运行的所有 Pod。 你可以在 /cks/net/p1.yaml 找到一个模板清单文件。
+
+    kind: NetworkPolicy
+    metadata:
+      name: denypolicy
+      namespace: testing
+    spec:
+      podSelector: {}
+      policyTypes:
+        - Ingress
+        - Egress
+
+    $ kubetctl -n testing describe networkpolicy denypolicy 
+    # 如果不要求Ingress，不写Ingress即可
 
 # 16. 日志审计 log audit
 Task 在 cluster 中启用审计日志。为此，请启用日志后端，并确保：
-1 日志存储在
-/var/log/kubernetes/audit-logs.txt
-2 日志文件能保留 10 天
-3 最多保留 2 个旧审计日志文件
++ 日志存储在 */var/log/kubernetes/audit-logs.txt*
++ 日志文件能保留 *10* 天
++ 最多保留 *2* 个旧审计日志文件
+
 /etc/kubernetes/logpolicy/sample-policy.yaml 提供了基本策略。它仅指定不记录的内容。
-注意：基本策略位于 cluster 的 master 节点上。 编辑和扩展基本策略以记录：
-4 RequestResponse 级别的
-cronjobs 更改
-5 namespace front-apps 中 deployment 更改的请求体
-6 Metadata
-级别的所有 namespace 中的 ConfigMap 和 Secret 的更改 此外，添加一个全方位的规则以在 Metadata
-级别记录所有其他请求。 注意：不要忘记应用修改后的策略
+注意：基本策略位于 cluster 的 master 节点上。 
+
+编辑和扩展基本策略以记录：
++ RequestResponse 级别的 *cronjobs* 更改
++ namespace *front-apps* 中 *deployment* 更改的请求体
++ *Metadata* 级别的所有 namespace 中的 ConfigMap 和 Secret 的更改 
+此外，添加一个全方位的规则以在 *Metadata* 级别记录所有其他请求。 
+注意：不要忘记应用修改后的策略
+
+
+    编辑/etc/kubernetes/logpolicy/sample-policy.yaml
+
+    kind: Policy
+    omitStages:
+      - "RequestReceived"
+    rules:
+      - level: RequestResponse
+        resources:
+        - group: ""
+          resources: ["cronjobs"]
+
+      - level: Metadata
+        resources:
+        - group: ""
+          resources: ["secrets", "configmaps"]
+
+      - level: Request
+        resources:
+        - group: "" # core API 组
+          resources: ["deployment"]
+        namespaces: ["front-apps"]
+
+      - level: Metadata
+        omitStages:
+          - "RequestReceived"
+
+    cp /etc/kubernets/manifests/kube-apiserver.yaml ~/bak
+    $ vi /etc/kubernets/manifests/kube-apiserver.yaml
+
+    - --audit-log-path=/var/log/kubernetes/audit-logs.txt
+    - --audit-log-maxage=10
+    - --audit-log-maxbackup=2
+    - --audit-policy-file=/etc/kubernetes/logpolicy/sample-policy.yaml
+
+    volumes:
+    - hostPath:
+        path: /etc/kubernetes/logpolicy
+        type: DirectoryOrCreate
+      name: audit
+    - hostPath:
+        path: /var/log/kubernetes
+        type: DirectoryOrCreate
+      name: audit-log
+
+
+    volumeMounts:
+    - mountPath: /etc/kubernetes/logpolicy
+      name: audit
+      readOnly: true
+    - mountPath: /var/log/kubernets
+      name: audit-log
+      readOnly: false
+
