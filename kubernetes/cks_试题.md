@@ -100,13 +100,14 @@ NodeRestriction。
 kubectl 配置文件 /etc/kubernetes/admin.conf ，以确保经过身份验证的授权的请求仍然被允许。
 
     2. （这个题先做第二步）
-    $ kubectl get clusterrolebinding |grep anonymous
-    $ kubectl delete clusterrolebinding system:anonymous
+    $ kubectl get clusterrolebinding -o wide|grep anonymous
+    $ kubectl delete clusterrolebinding xxx
 
     1.
     编辑/etc/kubernetes/manifests/kube-apiserver.yaml
     - --authorization-mode=Node,RBAC
     - --enable-admission-plugins=NodeRestriction
+    - --anonymous-auth: true   #这行要删除，或者true改成flase
 
 
 # 4. sysdig & falco
