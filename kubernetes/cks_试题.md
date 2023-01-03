@@ -293,6 +293,7 @@ Task: 在 cluster 的工作节点上，实施位于 /etc/apparmor.d/nginx_apparm
 AppArmor 配置文件。 最后，应用清单文件并创建其中指定的 Pod 。
 
     # /etc/apparmor.d/nginx_apparmor 查看profile名字
+    $ apparmor_parser nginx_apparmor
     # 编辑/home/candidate/KSSH00401/nginx-deploy.yaml
     metadata:
         annotations:
@@ -372,6 +373,31 @@ Task
 
 注意：确保应用 NetworkPolicy。 你可以在/cks/net/po.yaml 找到一个模板清单文件。
 
+
+    $ kubectl -n dev-team get pod --show-labels
+    apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      name: pod-restriction
+      namespace: dev-team
+    spec:
+      podSelector:
+        matchLabels:
+          environment: testing
+      policyTypes:
+        - Ingress
+      ingress:
+        - from:
+            - namespaceSelector:
+                matchLabels:
+                  name: qa
+        - from:
+            - namespaceSelector: {}
+              podSelector:
+                matchLabels:
+                  environment: testing
+  
+
 # 12. Dockerfile 检测
 Task 分析和编辑给定的 Dockerfile /cks/docker/Dockerfile（基于 ubuntu:16.04 镜像）， 并修复在文件中拥有的突出的安全/最佳实践问题的两个指令。 
 分析和编辑给定的清单文件 /cks/docker/deployment.yaml ， 并修复在文件中拥有突出的安全/最佳实践问题的两个字段。
@@ -380,6 +406,14 @@ Task 分析和编辑给定的 Dockerfile /cks/docker/Dockerfile（基于 ubuntu:
 注意：如果您需要非特权用户来执行任何项目，请使用用户 ID 65535 的用户 nobody 。 
 
 答题： 注意，本次的 Dockerfile 和 deployment.yaml 仅修改即可，无需部署。
+
+    Dockerfile：
+    latest修改为16.04
+    root修改为nobody
+
+    deployment:
+    删除SYS_ADMIN
+    template.metadata.run改为app， 添加version: stable
 
 # 13. ImagePolicyWebhook 容器镜像扫描
 Context cluster 上设置了容器镜像扫描器，但尚未完全集成到 cluster 的配置中。
@@ -394,10 +428,38 @@ Task 注意：你必须在 cluster 的 master 节点上完成整个考题，所�
 
 你可以在/var/log/imagepolicy/roadrunner.log 找到容器镜像扫描仪的日志文件。
 
+    编辑/etc/kubernetes/epconfig/admission_configuration.json
+    "defaultAllow": false
+
+    编辑/etc/kubernetes/epconfig/kubeconfig.yml
+    添加cluster.server: https://acme.local:8082/image_policy
+
+    搜索imagepocliywebhook
+    编辑/etc/kubernetes/manifests/kube-apiserver.yaml
+    - --enable-admission-plugins=...,ImagePolicyWebhook
+    - --admission-control-config-file=/etc/kubernetes/epconfig/dmission_configuration.json
+
+    - hostPath:
+    path: /etc/kubernetes/epconfig/
+    type: DirectoryOrCreate
+    name: imagepolicy
+
+    - mountPath: /etc/kubernetes/epconfig/
+    name: imagepolicy
+    readOnly: true
+
+    $ kubect apply -f  /cks/img/web1.yaml 
+
+
 # 14. Trivy 扫描镜像安全漏洞
 Task 使用 Trivy 开源容器扫描器检测 namespace kamino 中 Pod 使用的具有严重漏洞的镜像。 查找具有 High 或 Critical 严重性漏洞的镜像，并删除使用这些镜像的 Pod。 
 
 注意：Trivy 仅安装在 cluster 的 master 节点上， 在工作节点上不可使用。 你必须切换到 cluster 的 master 节点才能使用 Trivy
+
+    $ kubectl -n kamino get pod 
+    $ kubectl -n kamino get pod xxx -o yaml |grep image:
+    $ trivy image -s HIGH,CRITICAL nginx:1.18.0
+    $ kubeclt -n kamino delete pod xxx
 
 # 15. 默认网络策略
 Context 一个默认拒绝（default-deny）的 NetworkPolicy 可避免在未定义任何其他 NetworkPolicy 的 namespace 中 意外公开 Pod。 
