@@ -82,7 +82,7 @@ ServiceAccount。 注意：请勿删除现有的 RoleBinding。
     kubectl -n db create role role-2 --verb='delete' --resource='namespaces'
 
     3.
-    kubectl -n db create rolebinding role-2-binding --role='role-2' --serviceaccount="db:service-account-web"kubectl -n db create rolebing 
+    kubectl -n db create rolebinding role-2-binding --role='role-2' --serviceaccount="db:service-account-web"
 
 
 # 3. 启用 API server 认证
@@ -99,15 +99,15 @@ NodeRestriction。
 的安全加固， kubectl 的配置将无法工作。 您可以使用位于 cluster 的 master 节点上，cluster 原本的
 kubectl 配置文件 /etc/kubernetes/admin.conf ，以确保经过身份验证的授权的请求仍然被允许。
 
+    2. （这个题先做第二步）
+    $ kubectl get clusterrolebinding |grep anonymous
+    $ kubectl delete clusterrolebinding system:anonymous
 
     1.
     编辑/etc/kubernetes/manifests/kube-apiserver.yaml
     - --authorization-mode=Node,RBAC
     - --enable-admission-plugins=NodeRestriction
 
-    2. （这个题先做第二步）
-    $ kubectl get clusterrolebinding |grep anonymous
-    $ kubectl delete clusterrolebinding system:anonymous
 
 # 4. sysdig & falco
 Task： 使用运行时检测工具来检测 Pod tomcat 单个容器中频发生成和执行的异常进程。 有两种工具可供使用： sysdig、 falco 
@@ -298,7 +298,7 @@ AppArmor 配置文件。 最后，应用清单文件并创建其中指定的 Pod
           container.apparmor.security.beta.kubernetes.io/nginx: localhost/nginx-profile-3
                                                         containrer名字      profile名字
     $ kubectl apply -f  /home/candidate/KSSH00401/nginx-deploy.yaml
-    # 可以通过检查该配置文件的 proc attr 来验证容器是否实际使用该配置文件运行:w
+    # 可以通过检查该配置文件的 proc attr 来验证容器是否实际使用该配置文件运行
     $ kubectl exec nginx -- cat /proc/1/attr/current
     # 如果我们尝试通过写入文件来违反配置文件会发生什么
     $ kubectl exec nginx -- touch /tmp/test                                   
@@ -364,32 +364,39 @@ Fix all of the following violations that were found against etcd:
 
 # 11. 网络策略 NetworkPolicy
 Task
- 创建一个名为 pod-restriction 的 NetworkPolicy 来限制对在 namespace dev-team
-中运行的 Pod products-service 的访问。 只允许以下 Pod 连接到 Pod products-service 
-1 namespace qa 中的 Pod 2 位于任何 namespace，带有标签 environment: testing 的 Pod
+ 创建一个名为 pod-restriction 的 NetworkPolicy 来限制对在 namespace dev-team 中运行的 Pod products-service 的访问。 
+ 只允许以下 Pod 连接到 Pod products-service :
+1 namespace qa 中的 Pod 
+2 位于任何 namespace，带有标签 environment: testing 的 Pod
+
 注意：确保应用 NetworkPolicy。 你可以在/cks/net/po.yaml 找到一个模板清单文件。
 
 # 12. Dockerfile 检测
-Task 分析和编辑给定的 Dockerfile /cks/docker/Dockerfile（基于 ubuntu:16.04 镜像），
-并修复在文件中拥有的突出的安全/最佳实践问题的两个指令。 分析和编辑给定的清单文件 /cks/docker/deployment.yaml
-， 并修复在文件中拥有突出的安全/最佳实践问题的两个字段。
+Task 分析和编辑给定的 Dockerfile /cks/docker/Dockerfile（基于 ubuntu:16.04 镜像）， 并修复在文件中拥有的突出的安全/最佳实践问题的两个指令。 
+分析和编辑给定的清单文件 /cks/docker/deployment.yaml ， 并修复在文件中拥有突出的安全/最佳实践问题的两个字段。
+
 注意：请勿添加或删除配置设置；只需修改现有的配置设置让以上两个配置设置都不再有安全/最佳实践问题。
-注意：如果您需要非特权用户来执行任何项目，请使用用户 ID 65535 的用户 nobody 。 答题： 注意，本次的 Dockerfile
-和 deployment.yaml 仅修改即可，无需部署。
+注意：如果您需要非特权用户来执行任何项目，请使用用户 ID 65535 的用户 nobody 。 
+
+答题： 注意，本次的 Dockerfile 和 deployment.yaml 仅修改即可，无需部署。
 
 # 13. ImagePolicyWebhook 容器镜像扫描
 Context cluster 上设置了容器镜像扫描器，但尚未完全集成到 cluster 的配置中。
-完成后，容器镜像扫描器应扫描并拒绝易受攻击的镜像的使用。 Task 注意：你必须在 cluster 的 master
-节点上完成整个考题，所有服务和文件都已被准备好并放置在该节点上。 给定一个目录 /etc/kubernetes/epconfig
-中不完整的配置以及具有 HTTPS 端点 https://acme.local:8082/image_policy 的功能性容器镜像扫描器：
+完成后，容器镜像扫描器应扫描并拒绝易受攻击的镜像的使用。 
 
-启用必要的插件来创建镜像策略 2. 校验控制配置并将其更改为隐式拒绝（implicit deny） 3. 编辑配置以正确指向提供的 HTTPS 端点 最后，通过尝试部署易受攻击的资源 /cks/img/web1.yaml 来测试配置是否有效。 你可以在
-/var/log/imagepolicy/roadrunner.log 找到容器镜像扫描仪的日志文件。
+Task 注意：你必须在 cluster 的 master 节点上完成整个考题，所有服务和文件都已被准备好并放置在该节点上。 
+给定一个目录 /etc/kubernetes/epconfig 中不完整的配置以及具有 HTTPS 端点 https://acme.local:8082/image_policy 的功能性容器镜像扫描器：
+
++ 启用必要的插件来创建镜像策略 
++ 校验控制配置并将其更改为隐式拒绝（implicit deny） 
++ 编辑配置以正确指向提供的 HTTPS 端点 最后，通过尝试部署易受攻击的资源 /cks/img/web1.yaml 来测试配置是否有效。 
+
+你可以在/var/log/imagepolicy/roadrunner.log 找到容器镜像扫描仪的日志文件。
 
 # 14. Trivy 扫描镜像安全漏洞
-Task 使用 Trivy 开源容器扫描器检测 namespace kamino 中 Pod 使用的具有严重漏洞的镜像。 查找具有 High
-或 Critical 严重性漏洞的镜像，并删除使用这些镜像的 Pod。 注意：Trivy 仅安装在 cluster 的 master
-节点上， 在工作节点上不可使用。 你必须切换到 cluster 的 master 节点才能使用 Trivy
+Task 使用 Trivy 开源容器扫描器检测 namespace kamino 中 Pod 使用的具有严重漏洞的镜像。 查找具有 High 或 Critical 严重性漏洞的镜像，并删除使用这些镜像的 Pod。 
+
+注意：Trivy 仅安装在 cluster 的 master 节点上， 在工作节点上不可使用。 你必须切换到 cluster 的 master 节点才能使用 Trivy
 
 # 15. 默认网络策略
 Context 一个默认拒绝（default-deny）的 NetworkPolicy 可避免在未定义任何其他 NetworkPolicy 的 namespace 中 意外公开 Pod。 
