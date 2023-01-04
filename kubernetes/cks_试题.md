@@ -90,8 +90,7 @@ Context 由 kubeadm 创建的 cluster 的 Kubernetes API 服务器，出于测�
 临时配置允许未经身份验证和未经授权的访问，授予匿名用户 cluster-admin 的访问权限. 
 
 Task: 
-1.重新配置 cluster 的Kubernetes APl 服务器，以确保只允许经过身份验证和授权的 REST 请求。 使用授权模式 Node,RBAC 和准入控制器
-NodeRestriction。 
+1.重新配置 cluster 的Kubernetes APl 服务器，以确保只允许经过身份验证和授权的 REST 请求。 使用授权模式 Node,RBAC 和准入控制器 NodeRestriction。 
 
 2.删除用户 system:anonymous 的 ClusterRoleBinding 来进行清理。
 
@@ -107,7 +106,7 @@ kubectl 配置文件 /etc/kubernetes/admin.conf ，以确保经过身份验证�
     编辑/etc/kubernetes/manifests/kube-apiserver.yaml
     - --authorization-mode=Node,RBAC
     - --enable-admission-plugins=NodeRestriction
-    - --anonymous-auth: true   #这行要删除，或者true改成flase
+    - --anonymous-auth=true   #这行要删除，或者true改成flase
 
 
 # 4. sysdig & falco
