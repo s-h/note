@@ -390,12 +390,12 @@ Task
             - namespaceSelector:
                 matchLabels:
                   name: qa
+            - podSelector: {}
         - from:
             - namespaceSelector: {}
-              podSelector:
+            - podSelector:
                 matchLabels:
-                  environment: testing
-  
+                  environment: testing 
 
 # 12. Dockerfile 检测
 Task 分析和编辑给定的 Dockerfile /cks/docker/Dockerfile（基于 ubuntu:16.04 镜像）， 并修复在文件中拥有的突出的安全/最佳实践问题的两个指令。 
