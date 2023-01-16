@@ -106,7 +106,7 @@ kubectl 配置文件 /etc/kubernetes/admin.conf ，以确保经过身份验证�
     编辑/etc/kubernetes/manifests/kube-apiserver.yaml
     - --authorization-mode=Node,RBAC
     - --enable-admission-plugins=NodeRestriction
-    - --anonymous-auth=true   #这行要删除，或者true改成flase
+    - --anonymous-auth=true   #这行要删除，或者true改成false
 
 
 # 4. sysdig & falco
