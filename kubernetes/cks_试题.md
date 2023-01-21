@@ -4,9 +4,9 @@
 - [2. RBAC - RoleBinding](#2-rbac---rolebinding)
 - [3. 启用 API server 认证](#3-启用-api-server-认证)
 - [4. sysdig & falco](#4-sysdig--falco)
-- [5. 容器安全，删除特权 Pod](#5-容器安全删除特权-pod)
+- [5. 容器安全，删除特权 Pod (1.25废弃)](#5-容器安全删除特权-pod-125废弃)
 - [6. 沙箱运行容器 gVisor](#6-沙箱运行容器-gvisor)
-- [7. Pod 安全策略-PSP](#7-pod-安全策略-psp)
+- [7. Pod 安全策略-PSP (1.25废弃)](#7-pod-安全策略-psp-125废弃)
 - [8. 创建 Secret](#8-创建-secret)
 - [9. AppArmor](#9-apparmor)
 - [10. kube-bench 修复不安全项](#10-kube-bench-修复不安全项)
@@ -16,6 +16,8 @@
 - [14. Trivy 扫描镜像安全漏洞](#14-trivy-扫描镜像安全漏洞)
 - [15. 默认网络策略](#15-默认网络策略)
 - [16. 日志审计 log audit](#16-日志审计-log-audit)
+- [17. pod安全](#17-pod安全)
+- [18. tls安全](#18-tls安全)
 
 <!-- /TOC -->
 
@@ -99,13 +101,13 @@ Task:
 kubectl 配置文件 /etc/kubernetes/admin.conf ，以确保经过身份验证的授权的请求仍然被允许。
 
     2. （这个题先做第二步）
-    $ kubectl get clusterrolebinding -o wide|grep anonymous
-    $ kubectl delete clusterrolebinding xxx
-
+    $ kubectl get clusterrolebinding system:anonymous
+    $ kubectl delete clusterrolebinding system:anonymous
+    $ kubectl get clusterrolebinding system:anonymous
     1.
     编辑/etc/kubernetes/manifests/kube-apiserver.yaml
     - --authorization-mode=Node,RBAC
-    - --enable-admission-plugins=NodeRestriction
+    - --enable-admission-plugins=NodeRestriction   (需要将AlwaysAdmit删除)
     - --anonymous-auth=true   #这行要删除，或者true改成false
 
 
@@ -141,7 +143,7 @@ Task： 使用运行时检测工具来检测 Pod tomcat 单个容器中频发生
     $ sysdig -M 30 -p '%evt.time,%user.uid,%proc.name' container.id=xxx >> xxx
     $ sysdig -M 30 -p '%evt.time,%user.name,%proc.name' container.id=xxx >> xxx
 
-# 5. 容器安全，删除特权 Pod
+# 5. 容器安全，删除特权 Pod (1.25废弃)
 Task: 检查在 namespace production 中运行的 Pod，并删除任何非无状态或非不可变的 Pod。
 使用以下对无状态和不可变的严格解释： 1 能够在容器内存储数据的 Pod 的容器必须被视为非无状态的。
 
@@ -179,7 +181,7 @@ Pod 以在 gVisor 上运行。
     在spec.spec下面添加：(此处需确认)
       runtimeClassName: untrusted
 
-# 7. Pod 安全策略-PSP
+# 7. Pod 安全策略-PSP (1.25废弃)
 Context PodSecurityPolicy 应防在特定 namespace 中特权 Pod 的创建。 
 
 Task: 
@@ -390,10 +392,9 @@ Task
             - namespaceSelector:
                 matchLabels:
                   name: qa
-            - podSelector: {}
         - from:
             - namespaceSelector: {}
-            - podSelector:
+              podSelector:
                 matchLabels:
                   environment: testing 
 
@@ -408,10 +409,10 @@ Task 分析和编辑给定的 Dockerfile /cks/docker/Dockerfile（基于 ubuntu:
 
     Dockerfile：
     latest修改为16.04
-    root修改为nobody
+    CMD前面的USER root修改为nobody
 
     deployment:
-    删除SYS_ADMIN
+    删除 'SYS_ADMIN' 字段，确保 'privileged': 为 False 。
     template.metadata.run改为app， 添加version: stable
 
 # 13. ImagePolicyWebhook 容器镜像扫描
@@ -551,3 +552,37 @@ Task 在 cluster 中启用审计日志。为此，请启用日志后端，并确
       name: audit-log
       readOnly: false
 
+# 17. pod安全
+task：
+修改运行在namespace webapp，名为web-deployment的现有deployment，使其容器：
++ 使用用户ID 20000运行
++ 使用一个只读根文件系统
++ 禁止特权提升
+
+    每个容器增加：
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+
+    template.spec下增加或修改：
+    securityContext:
+      runAsUser: 30000
+
+
+# 18. tls安全
+task：
+修改API服务器和etcd之间通信的TLS配置。
+
+1.对于API服务器，删除对除*TLS 1.3*及更高版本之外的所有TLS版本的支持。此外，删除堆除*TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256*之外的所有cipher suites的支持。
+确保应用配置的更改
+
+2.对于etcd，删除对除TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256之外的所有chpher suites的支持
+确保应用配置的更改
+
+    关键字kube-apiserver
+    修改kube-api配置，/etc/kubernetes/manifests/kube-apiserver.yaml
+    - --tls-min-version=VersionTLS13
+    - --tls-cipher-suites=TLS_AES_128_GCM_SHA256
+
+    修改etcd配置，/etc/kubernetes/manifests/etcd.yaml
+    - --cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
