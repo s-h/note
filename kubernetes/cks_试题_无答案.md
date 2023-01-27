@@ -4,9 +4,9 @@
 - [2. RBAC - RoleBinding](#2-rbac---rolebinding)
 - [3. 启用 API server 认证](#3-启用-api-server-认证)
 - [4. sysdig & falco](#4-sysdig--falco)
-- [5. 容器安全，删除特权 Pod](#5-容器安全删除特权-pod)
+- [5. 容器安全，删除特权 Pod (1.25废弃)](#5-容器安全删除特权-pod-125废弃)
 - [6. 沙箱运行容器 gVisor](#6-沙箱运行容器-gvisor)
-- [7. Pod 安全策略-PSP](#7-pod-安全策略-psp)
+- [7. Pod 安全策略-PSP (1.25废弃)](#7-pod-安全策略-psp-125废弃)
 - [8. 创建 Secret](#8-创建-secret)
 - [9. AppArmor](#9-apparmor)
 - [10. kube-bench 修复不安全项](#10-kube-bench-修复不安全项)
@@ -16,6 +16,8 @@
 - [14. Trivy 扫描镜像安全漏洞](#14-trivy-扫描镜像安全漏洞)
 - [15. 默认网络策略](#15-默认网络策略)
 - [16. 日志审计 log audit](#16-日志审计-log-audit)
+- [17. pod安全](#17-pod安全)
+- [18. tls安全](#18-tls安全)
 
 <!-- /TOC -->
 
@@ -60,7 +62,7 @@ Task： 使用运行时检测工具来检测 Pod tomcat 单个容器中频发生
 注：确保事件文件存储在集群的工作节点上。
 
 
-# 5. 容器安全，删除特权 Pod
+# 5. 容器安全，删除特权 Pod (1.25废弃)
 Task: 检查在 namespace production 中运行的 Pod，并删除任何非无状态或非不可变的 Pod。
 使用以下对无状态和不可变的严格解释： 1 能够在容器内存储数据的 Pod 的容器必须被视为非无状态的。
 
@@ -76,7 +78,7 @@ Pod 以在 gVisor 上运行。
 
 您可以在 /cks/gVisor/rc.yaml 中找到一个模版清单
 
-# 7. Pod 安全策略-PSP
+# 7. Pod 安全策略-PSP (1.25废弃)
 Context PodSecurityPolicy 应防在特定 namespace 中特权 Pod 的创建。 
 
 Task: 
@@ -219,3 +221,21 @@ Task 在 cluster 中启用审计日志。为此，请启用日志后端，并确
 + *Metadata* 级别的所有 namespace 中的 ConfigMap 和 Secret 的更改 
 此外，添加一个全方位的规则以在 *Metadata* 级别记录所有其他请求。 
 注意：不要忘记应用修改后的策略
+
+# 17. pod安全
+task：
+修改运行在namespace webapp，名为web-deployment的现有deployment，使其容器：
++ 使用用户ID 20000运行
++ 使用一个只读根文件系统
++ 禁止特权提升
+
+
+# 18. tls安全
+task：
+修改API服务器和etcd之间通信的TLS配置。
+
+1.对于API服务器，删除对除*TLS 1.3*及更高版本之外的所有TLS版本的支持。此外，删除堆除*TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256*之外的所有cipher suites的支持。
+确保应用配置的更改
+
+2.对于etcd，删除对除TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256之外的所有chpher suites的支持
+确保应用配置的更改
