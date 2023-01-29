@@ -351,3 +351,11 @@ Task
 在执行第一次探测前应该等待 15 秒
 执行探测的时间间隔为 20 秒
 
+    $ kubectl edit deployment probe-http
+    deployment.spec.template.spec.containers
+    livenessProbe:
+        httpGet:
+          path: /healthz/return200
+          port: 80
+        initialDelaySeconds: 15
+        periodSeconds: 20
