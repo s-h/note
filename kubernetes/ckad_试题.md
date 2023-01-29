@@ -120,7 +120,7 @@ haddock namespace 中名为 nosql 的 Deployment 的 Pod 因其容器已用完�
       limits:
         memory: "20Mi"  #根据namespace实际填写
 
-# 运行旧版应用程序
+# 6. 运行旧版应用程序
 Task
 1、修复清单文件 /ckad/credible-mite/www.yaml 中的任何 API 弃用问题，以便可以将应用程序部署在 k8s cluster 上。
  注意：该应用程序是为 Kubernetes v1.15 开发的。
@@ -136,7 +136,7 @@ Task
       matchLabels:
         app: nginx
 
-# 金丝雀部署
+# 7. 金丝雀部署
 为了测试新的应用程序发布，您需要准备一个金丝雀部署。
 Task:
 namespace goshawk 中名为 chipmunk-service 的 Service 指向名为 current-chipmunk-deployment 的 Deployment 创建的 5 个 Pod。
@@ -145,3 +145,161 @@ namespace goshawk 中名为 chipmunk-service 的 Service 指向名为 current-ch
 2、修改 Deployment，以便：
 + 在 namespace goshawk 中运行的 Pod 的最大数量为 10 个
 + chipmunk.service 流量的 40%流向 Pod canary-chipmunk-deployment
+
+    $ cp /ckad/goshawk/current-chipmunk-deployment.yaml bak.yaml
+    $ vi /ckad/goshawk/current-chipmunk-deployment.yaml
+    metadata:
+    name: canary-chipmunk-deployment #这个根据题目要求修改
+    namespace: goshawk
+    spec:
+    replicas: 1 #这里也先修改为 1
+    selector:
+    matchLabels:
+    app: canary-chipmunk-deployment
+    run: dep-svc #确保 current-chipmunk-deployment 和 canary-chipmunk-deployment 都有这个公用的标签。
+    template:
+    metadata:
+    labels:
+    app: canary-chipmunk-deployment
+    run: dep-svc #确保 current-chipmunk-deployment 和 canary-chipmunk-deployment 都有这个公用的标签
+
+    $ kubectl apply -f /ckad/goshawk/current-chipmunk-deployment.yaml
+    $ kubectl scale deployment current-chipmunk-deployment --replicas=6 -n goshawk
+    $ kubectl scale deployment canary-chipmunk-deployment --replicas=4 -n goshawk
+    # 注意，如果考试时，有可能考将 20%流量给金丝雀版本 Pod，那就是原先为 8 个，金丝雀为 2 个
+    $ kubectl get pod -n goshawk
+
+# 8. 配置 Container 安全上下文
+Task
+修改运行在 namespace quetzal 名为 broker-deployment 的现有 Deployment，使其容器
++ 以用户 30000 运行
++ 禁止特权提升。
+您可以在/ckad/daring-moccasin/broker-deployment.yaml 找到 broker-deployment 的清单文件。（模拟环境无此文件，做题也不需要此文件）
+
+    $ kubectl -n quetzal edit deployments.apps broker-deployment
+    .spec.template.spec.containers下增加：
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsUser: 30000
+
+# 9. 创建 Deployment 并指定环境变量
+在现有的 namespace ckad00014 中创建一个运行 6 个 Pod 副本，名为 api 的 Deployment。用 nginx:1.16 的镜像来指定一个容器。
+将名为 NGINX_PORT 且值为 8000 的环境变量添加到容器中，然后公开端口 80
+
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+    name: api
+    namespace: ckad00014
+    labels:
+        app: nginx
+    spec:
+    replicas: 6
+    selector:
+        matchLabels:
+        app: nginx
+    template:
+        metadata:
+        labels:
+            app: nginx
+        spec:
+        containers:
+        - name: api
+            image: nginx:1.16
+            ports:
+            - containerPort: 80
+            env:
+            - name: NGINX_PORT 
+            value: '8000'
+
+# 10. RBAC 授权
+Task
+在名为 honeybee-deployment 的 Deployment 和 namespace gorilla 中的一个 Pod 正在记录错误.
+1 查看日志以识别错误消息。
+找出错误，包括 User “system:serviceaccount:gorilla:default ”cannot list resource “serviceaccounts” […] in the namespace “gorilla”
+2 更新 Deployment honeybee-deployment 以解决 Pod 日志中的错误。
+您可以在/ckad/prompt-escargot/honeybee-deployment.yaml 中找到 honeybee-deployment 的清单文件
+
+
+    1、通过 logs 打印错误日志
+    $ kubectl -n gorilla get pod
+    $ kubectl -n gorilla logs honeybee-deployment-***
+
+    2、检查现有的 serviceaccount
+    $ kubectl -n gorilla get sa
+
+    查看 rolebinding 和 role 的绑定
+    $ kubectl -n gorilla get rolebinding
+    通过 rolebinding，查看 role 和 serviceaccount 的绑定
+    $ kubectl -n gorilla describe rolebinding
+    检查 role，寻找有 get 或 list 权限的 role
+    $ kubectl -n gorilla describe role
+
+    3、设置 honeybee-deployment 的 serviceaccount
+    $ kubectl -n gorilla set serviceaccount deployments honeybee-deployment gorilla-sa
+    等 2 分钟，会自动生成一个新 pod，再次检查，不报错了
+    $ kubectl -n gorilla logs honeybee-deployment-***
+
+# 11. ConfigMap
+Task
+1 在 namespace default 中创建一个名为 some-config 并存储着以下键/值对的 Configmap：
+key3: value4
+2 在 namespace default 中创建一个名为 nginx-configmap 的 Pod。用 nginx:stable 的镜像来指定一个容器。
+用存储在 Configmap some-config 中的数据来填充卷，并将其安装在路径/some/path
+
+    $ kubectl create configmap some-config --from-literal=key3=value4
+    $ vim pod.yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+    name: nginx-configmap
+    spec:
+    containers:
+        - name: nginx-configmap
+        image: nginx:stable
+        volumeMounts:
+        - name: config
+            mountPath: "/some/path"
+    volumes:
+    - name: config
+        configMap:
+        name: some-config
+    
+    $ kubectl apply -f pod.yaml
+
+
+# 12. Secret
+Task
+1、在 namespace default 中创建一个名为 another-secret 并包含以下单个键/值对的 Secret：
+key1: valuel2
+2、在 namespace default 中创建一个名为 nginx-secret 的 Pod。用 nginx:1.16 的镜像来指定一个容器。
+添加一个名为 COOL_VARIABLE 的环境变量来使用 secret 键 key1 的值。
+
+    $ kubectl create secret  generic another-secret --from-literal=key1=valuel2
+    $ vim pod.yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+    name: nginx-secret
+    spec:
+    containers:
+    - name: nginx-secret
+        image: nginx:1.16
+        env:
+        - name: COOL_VARIABLE
+            valueFrom:
+            secretKeyRef:
+                name: another-secret
+                key: key1
+                optional: false # 此值为默认值；意味着 "mysecret"
+                                # 必须存在且包含名为 "username" 的主键
+
+# 13. Pod 健康检查 livenessProbe
+Task
+由于 Liveness Probe 发生了问题，您无法访问一个应用程序。该应用程序可能在任何 namespace 中运行。
+1 找出对应的 Pod 并将其名称和 namespace 写入文件 /ckad/CKAD00011/broken.txt 。使用以下格式：
+<namespaceName>/<podName>
+文件/ckad/CKAD00011/broken.txt 已存在
+2 用 kubectl get events 来获取相关错误事件井将其写入文件 /ckad/CKAD00011/error.txt 。请使用输出格式 wide 。
+文件/ckad/CKAD00011/error.txt 已存在。
+3 修复故障的 Pod 的 Liveness Probe 问题。
