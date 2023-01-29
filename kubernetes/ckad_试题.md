@@ -1,3 +1,21 @@
+<!-- TOC -->
+
+- [1. CronJob-1](#1-cronjob-1)
+- [2. CronJob-2](#2-cronjob-2)
+- [3. Dockerfile](#3-dockerfile)
+- [4. 限制 CPU 和内存 - 1](#4-限制-cpu-和内存---1)
+- [5. 限制 CPU 和内存 - 1](#5-限制-cpu-和内存---1)
+- [6. 运行旧版应用程序](#6-运行旧版应用程序)
+- [7. 金丝雀部署](#7-金丝雀部署)
+- [8. 配置 Container 安全上下文](#8-配置-container-安全上下文)
+- [9. 创建 Deployment 并指定环境变量](#9-创建-deployment-并指定环境变量)
+- [10. RBAC 授权](#10-rbac-授权)
+- [11. ConfigMap](#11-configmap)
+- [12. Secret](#12-secret)
+- [13. Pod 健康检查 livenessProbe](#13-pod-健康检查-livenessprobe)
+- [14. Pod 健康检查 readinessProbe](#14-pod-健康检查-readinessprobe)
+
+<!-- /TOC -->
 # 1. CronJob-1
 Task
 1、创建一个名为 ppi 并执行一个运行以下单一容器的 Pod 的 CronJob：
@@ -303,3 +321,33 @@ Task
 2 用 kubectl get events 来获取相关错误事件井将其写入文件 /ckad/CKAD00011/error.txt 。请使用输出格式 wide 。
 文件/ckad/CKAD00011/error.txt 已存在。
 3 修复故障的 Pod 的 Liveness Probe 问题。
+
+    1、
+    检查集群 dk8s 下的所有命令空间里的 Pods，找出 Liveness probe 问题的 Pod。
+    kubectl get pods -A
+    对所有 namespace 下的 pod 逐一检查，考试中会有 5 个 pod 需要你检查。
+    kubectl describe pod probe-demo -n probe-ns |tail    
+
+    echo probe-ns/probe-demo >/ckad/CKAD00011/broken.txt
+    2、
+    kubectl get events -n probe-ns -o wide |grep probe-demo > /ckad/CKAD00011/error.txt 3、
+    kubectl get pods probe-demo -n probe-ns -o yaml > probe.yaml
+    cp probe.yaml bak-probe.yaml
+    kubectl delete -f probe.yaml
+
+    3.vi probe.yaml
+    #修改livenessProbe:字段下的port为8443
+    kubectl apply -f probe.yaml
+    检查
+    kubectl describe pod probe-demo -n probe-ns |tail
+
+
+# 14. Pod 健康检查 readinessProbe
+
+修改现有的 deployment probe-http ，增加 readinessProbe 探测器，规格如下：
+使用 httpGet 进行探测
+探测路径为 /healthz/return200
+探测端口为 80
+在执行第一次探测前应该等待 15 秒
+执行探测的时间间隔为 20 秒
+
