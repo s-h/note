@@ -14,8 +14,15 @@
 - [12. Secret](#12-secret)
 - [13. Pod 健康检查 livenessProbe](#13-pod-健康检查-livenessprobe)
 - [14. Pod 健康检查 readinessProbe](#14-pod-健康检查-readinessprobe)
+- [15. 升级与回滚](#15-升级与回滚)
+- [16. Deployment 使用 ServiceAcount](#16-deployment-使用-serviceacount)
+- [17. 更新 Deployment 并暴露 Service](#17-更新-deployment-并暴露-service)
+- [18. NetworkPolicy 网络策略](#18-networkpolicy-网络策略)
+- [19. Ingress 排错-1](#19-ingress-排错-1)
+- [20. Ingress 排错-2](#20-ingress-排错-2)
 
 <!-- /TOC -->
+
 # 1. CronJob-1
 Task
 1、创建一个名为 ppi 并执行一个运行以下单一容器的 Pod 的 CronJob：
@@ -359,3 +366,89 @@ Task
           port: 80
         initialDelaySeconds: 15
         periodSeconds: 20
+
+# 15. 升级与回滚
+Task
+1 更新 namespace ckad00015 中的 Deployment webapp 的比例缩放配置，将 maxSurge 设置为 10%，将 maxUnavailable 设置为 4。
+2 更新 Deployment webapp 以让容器镜像 nginx 使用版本标签 1.15。
+3 将 Deployment webapp 回滚至前一版本。
+
+    $ kubectl edit deployment webapp -n ckad00015
+      strategy:
+        rollingUpdate:
+          maxSurge: 10%
+          maxUnavailable: 4
+
+    先检查一下之前的 image 版本，为 lfccncf/nginx:1.12.2
+    $ kubectl -n ckad00015 get deployments webapp -o yaml|grep image
+    先检查一下之前的 image 版本，为 lfccncf/nginx:1.12.2
+    $ kubectl -n ckad00015 get deployments webapp -o yaml|grep image
+    再次检查，image 为 1.13.7 了。
+    $ kubectl -n ckad00015 get deployments webapp -o yaml|grep image
+
+    回滚
+    $ kubectl rollout undo deployment webapp -n ckad00015
+
+# 16. Deployment 使用 ServiceAcount
+Task
+更新在 namespace frontend 中的 Deployment，使其使用现有的 ServiceAccount app
+
+
+    $ kubectl -n frontend set serviceaccount deployments frontend-deployment app
+
+
+# 17. 更新 Deployment 并暴露 Service
+1 首先，更新在 namespace ckad00017 中的 Deployment ckad00017-deployment ：
++ 以使其运行 5 个 Pod 的副本
++ 将以下标签添加到 Pod
+tier: dmz
+2 然后，在 namespace ckad00017 中创建一个名为 rover 的 NodePort Service 以在 TCP 端口 81 上公开 Deployment ckad00017-deployment
+
+    $ kubectl -n ckad00017 scale deployment --replicas=5 ckad00017-deployment
+    $ kubectl -n ckad00017 label pods --namespace ckad00017 --all
+
+    $ kubectl -n ckad00017 get deployments ckad00017-deployment -o yaml|grep -i "containerPort:"
+    $ kubectl -n ckad00017 expose deployment ckad00017-deployment --name=rover --protocol=TCP --port=81 --target-port=81 --type=NodePort
+
+    --port=81 是暴露的 service 的端口为 81。
+    --target-port=81 是 Deployment ckad00017-deployment 内 Pod 容器使用的端口，这个需要检查 yaml 文件。如果检查完，发现容器端口为 containerPort: 80，
+    或者没有 containerPort，则也是用默认的 80。则暴露服务的命令需要写成
+
+# 18. NetworkPolicy 网络策略
+Task
+更新在 namespace ckad00018 中的 Pod ckad00018-newpod ，
+使其使用一个只允许 此 Pod 与 Pod front 和 db 之间收发流量的 Networkpolicy。
+
+    $ kubectl -n ckad00018 get networkpolicy
+    $ kubectl -n ckad00018 get networkpolicy access-front -o yamlgg
+    $ kubectl -n ckad00018 get networkpolicy access-db -o yaml
+    $ kubectl -n ckad00018 get pod --show-labels
+    给 ckad00018-newpod 打正确的标签
+    $ kubectl label pod -n ckad00018 ckad00018-newpod front-access=true
+    $ kubectl label pod -n ckad00018 ckad00018-newpod db-access=true
+    再次检查标签
+    $ kubectl -n ckad00018 get pod --show-labels
+
+# 19. Ingress 排错-1
+Task
+在 namespace ingress-ckad 下，有 deployment service ingress 三个资源已经部署好了，
+但是他们的配置有问题，导致的 ingress 网络不通。
+3 个资源的配置清单在目录/ckad/CKAD202206 中，请将其修改为正确的，并重新创建。
+请注意，这道题的 deployment 是正确的，请不要修改 deployment
+
+    Service    
+    检查一下，确保 Service 的 port 和 Ingress 的 port:number 端口一致
+    targetPort: 81         修改 Service 的 targetPort 端口与上面 Deployment 的 containerPort 端口号一致，即修改为 81
+    name: nginx-ing        修改 Service 的 selector 为上面 Deployment 的 labels 标签，即修改为 name: nginx-ing，注意是 name 冒号空格 nginx-ing
+
+    ingress
+    - path: /hello ## 4 ## 检查一下 Ingress 的 path，如果题目里有要求，则修改为题目要求的路径
+    name: nginx-ing-svc ## 3 ## 修改 Ingress 的 service 为上面 Service 的 name 名字，即修改为 name: nginx-ing-svc
+    number: 80 ## 5 ## 检查一下，确保 Ingress 的 port:number 和 Service 的 port 端口一致
+
+# 20. Ingress 排错-2
+Task
+在 namespace ingress-kk 下有一个 ingress ，但是它貌似不能被正常访问，
+请排除出原因，并修复。
+请注意，这道题的 deployment 是正确的，请不要修改 deployment
+
