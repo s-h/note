@@ -452,3 +452,26 @@ Task
 请排除出原因，并修复。
 请注意，这道题的 deployment 是正确的，请不要修改 deployment
 
+    先检查这道题里的 ingress 和 deployment，以及 service，这三项哪里有问题。
+    $ kubectl -n ingress-kk get all
+    经过分析检查，会发现没有 service，所以需创建 service，而 service 需要的内容部分来自 ingress 和 deployment 里的字段。
+    查看 ingress，记下 service 的 name 和 port 的 number
+    kubectl -n ingress-kk get ingress -o yaml
+    查看 deployment，记下 ports 的 containerPort
+    kubectl -n ingress-kk get deployments -o yaml
+    创建 service
+    vi kk-svc.yaml
+
+    apiVersion: v1
+    kind: Service
+    metadata:
+    name: serivce-kk            # 和ingress配置对应
+    namespace: ingress-kk
+    spec:
+    selector:
+        app: nginx                   # 和deployment配置对应
+    ports:
+    - name: name-of-service-port 
+        protocol: TCP
+        port: 81                  # 和ingress配置对应
+        targetPort: 80            # 和deployment配置对应
