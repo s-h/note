@@ -101,9 +101,10 @@ Task:
 kubectl 配置文件 /etc/kubernetes/admin.conf ，以确保经过身份验证的授权的请求仍然被允许。
 
     2. （这个题先做第二步）
-    $ kubectl get clusterrolebinding system:anonymous
-    $ kubectl delete clusterrolebinding system:anonymous
-    $ kubectl get clusterrolebinding system:anonymous
+    $ kubectl get clusterrolebinding -o wide |grep system:anonymous
+    查看user为system:anonymous
+    $ kubectl delete clusterrolebinding xxx
+    $ kubectl get clusterrolebinding -o wide |grep system:anonymous
     1.
     编辑/etc/kubernetes/manifests/kube-apiserver.yaml
     - --authorization-mode=Node,RBAC
