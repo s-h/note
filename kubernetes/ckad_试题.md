@@ -381,9 +381,9 @@ Task
 
     先检查一下之前的 image 版本，为 lfccncf/nginx:1.12.2
     $ kubectl -n ckad00015 get deployments webapp -o yaml|grep image
-    先检查一下之前的 image 版本，为 lfccncf/nginx:1.12.2
-    $ kubectl -n ckad00015 get deployments webapp -o yaml|grep image
-    再次检查，image 为 1.13.7 了。
+    设置image
+    $ kubectl -n ckad00015 set image deployment webapp nginx=nginx:1.15
+    再次检查，image 为 1.15
     $ kubectl -n ckad00015 get deployments webapp -o yaml|grep image
 
     回滚
