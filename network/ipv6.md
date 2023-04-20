@@ -1,7 +1,7 @@
 # linux
 ## 查看ipv6路由
 
-    ip -6 show 
+    ip -6 route show 
 
 ## 添加默认路由
 
