@@ -22,6 +22,7 @@
     - [修复索引只读](#修复索引只读)
 - [curl](#curl)
     - [使用用户名密码访问](#使用用户名密码访问)
+- [默认分片副本设置（6.x）](#默认分片副本设置6x)
 
 <!-- /TOC -->
 ## 数据迁移
@@ -251,3 +252,16 @@ low
 ### 使用用户名密码访问
 
     curl --user ops:user@password http://192.168.1.100:9200/_cat/
+
+## 默认分片副本设置（6.x）
+
+    GET _template/default_template
+
+    POST _template/default_template
+    {
+    "index_patterns": ["*"],
+    "settings": {
+        "number_of_shards": 3,
+        "number_of_replicas": 1
+    }
+    }

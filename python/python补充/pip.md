@@ -28,3 +28,7 @@
 
     [install]
     trusted-host=mirrors.aliyun.com
+
+# 依赖包导出
+
+    pip freeze > requirements.txt
