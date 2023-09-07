@@ -1,5 +1,10 @@
 <!-- TOC -->
 
+- [es6.8.23安装](#es6823安装)
+    - [系统初始化](#系统初始化)
+    - [配置elasticsearch](#配置elasticsearch)
+    - [生成证书](#生成证书)
+    - [开启服务](#开启服务)
 - [数据迁移](#数据迁移)
     - [reindex](#reindex)
     - [snapshot](#snapshot)
@@ -25,6 +30,98 @@
 - [默认分片副本设置（6.x）](#默认分片副本设置6x)
 
 <!-- /TOC -->
+## es6.8.23安装
+### 系统初始化
+磁盘分区挂载 略
+关闭swap 略
+JDK安装 略
+
+    echo 'echo 'vm.max_map_count = 262144' >> /etc/sysctl.conf'
+    sysctl -p
+    cat /etc/security/limits.d/20-nproc.conf
+
+    * soft nofile 204800
+    * hard nofile 204800
+    * soft nproc 65535
+    * hard nproc 65535
+    * soft memlock unlimited
+    * hard memlock unlimited
+
+### 配置elasticsearch
+解压elasticsearch
+
+    tar zxvf elasticsearch-6.8.23.tar.gz; cd elasticsearch-6.8.23
+
+配置使用内存
+
+    vim config/jvm.options
+
+配置es
+
+    vim config/elasticsearch.yml
+    # 集群名称，集群统一
+    cluster.name: mycluster
+    # 节点名称，节点唯一
+    node.name: mynode01
+    # 存储目录, 可以配置多个，节点之间存储目录数量、大小最好保持一致
+    path.data: ["/data01", "/data02"]
+    # 禁用swap
+    bootstrap.memory_lock: true
+    # 服务器ip
+    network.host: 192.168.1.1
+    # 集群所有节点ip , 集群主机数量应为单数防止脑裂
+    discovery.zen.ping.unicast.hosts: ["192.168.1.1", "192.168.1.2", "192.168.1.3"]
+    # 达到恢复任务节点数
+    gateway.recover_after_nodes: 2
+    # 集群最小数量
+    discovery.zen.minimum_master_nodes: 2
+    # 安全相关配置，启用密码, es6.8及7以后，xpack密码功能免费
+    xpack.security.enabled: true
+    xpack.ml.enabled: true
+    xpack.license.self_generated.type: trial
+    # 启用ssl传输安全性
+    xpack.security.transport.ssl.enabled: true
+    xpack.security.transport.ssl.verification_mode: certificate
+    xpack.security.transport.ssl.keystore.path: certs/elastic-certificates.p12
+    xpack.security.transport.ssl.truststore.path: certs/elastic-certificates.p12
+
+
+### 生成证书
+
+    mkdir config/certs; cd config/certs
+    ../../bin/elasticsearch-certutil ca
+    ../../bin/elasticsearch-certutil cert --ca elastic-stack-ca.p12
+
+### 开启服务
+
+    cat /etc/systecat /etc/systemd/system/elasticsearch.service 
+
+    [Unit]
+    Description=elasticsearch
+    After=network.target
+
+    [Service]
+    Type=simple
+    User=elastic
+    Group=elasitc
+    LimitNOFILE=100000
+    LimitNPROC=100000
+    LimitMEMLOCK=infinity
+    Restart=no
+    ExecStart=/opt/elasticsearch/bin/elasticsearch
+    PrivateTmp=true
+
+    [Install]
+    WantedBy=multi-user.target
+
+    # 开启服务
+    systemctl start elasticsearch
+    systemctl enable elasticsearch
+
+    # 生成密码 
+    ./bin/elasticsearch-setup-passwords interactive
+
+
 ## 数据迁移
 ### reindex
 新集群需要配置：
