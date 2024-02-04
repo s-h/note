@@ -28,6 +28,13 @@
 - [curl](#curl)
     - [使用用户名密码访问](#使用用户名密码访问)
 - [默认分片副本设置（6.x）](#默认分片副本设置6x)
+- [ES故障排查](#es故障排查)
+    - [集群状态](#集群状态)
+    - [查看集群状态](#查看集群状态)
+    - [查找异常索引](#查找异常索引)
+    - [查看异常信息](#查看异常信息)
+    - [查看分片状态](#查看分片状态)
+    - [查看异常信息](#查看异常信息)
 
 <!-- /TOC -->
 ## es6.8.23安装
@@ -286,6 +293,11 @@ low
       }
     }
 
+    使用curl数据查询
+
+    curl  -H "Content-Type: application/json" -XGET http://x.x.x.x:9200/indexname/_search?pretty -d ' {"query":{"match_all":{}}}'
+
+
 #### 指标聚合
 相当于msyql聚合函数
 
@@ -362,3 +374,72 @@ low
         "number_of_replicas": 1
     }
     }
+
+## ES故障排查
+[Elasticsearch集群异常状态（RED、YELLOW）原因分析](https://cloud.tencent.com/developer/article/1803943?from_column=20421&from=20421)
+### 集群状态
++ GREEN 主分片和副本分片都已分配，Elasticsearch集群是100%可用的
++ YELLOW 主分片可用，但是副本分片不可用, 但至少还有一个副本是未分配的。不会有数据丢失
++ RED 存在不可用的主分片。此时执行查询虽然部分数据仍然可以查到，但实际上已经影响到索引读写，需要重点关注。这种情况Elasticsearch集群至少一个主分片（以及它的全部副本）都在缺失中。这意味着索引已缺少数据，搜索只能返回部分数据，而分配到这个分片上的请求都返回异常
+
+### 查看集群状态
+
+    _cluster/health
+
+返回以下信息：
+重点看**集群状态**、**未分配的分片数**
+
++ cluster_name	集群的名称
++ status	集群的运行状况
++ timed_out	如果false响应在timeout参数指定的时间段内返回（30s默认情况下）
++ number_of_nodes	集群中的节点数
++ number_of_data_nodes	作为专用数据节点的节点数
++ active_primary_shards	活动主分区的数量
++ active_shards	活动主分区和副本分区的总数
++ relocating_shards	正在重定位的分片的数量
++ initializing_shards	正在初始化的分片数
++ unassigned_shards	未分配的分片数
++ delayed_unassigned_shards	其分配因超时设置而延迟的分片数
++ number_of_pending_tasks	尚未执行的集群级别更改的数量
++ number_of_in_flight_fetch	未完成的访存数量
++ task_max_waiting_in_queue_millis	自最早的初始化任务等待执行以来的时间（以毫秒为单位）
++ active_shards_percent_as_number	群集中活动碎片的比率，以百分比表示
+
+### 查找异常索引
+
+    GET _cat/indices
+
+### 查看异常信息
+
+    GET /_cluster/allocation/explain
+
+### 查看分片状态
+
+    GET _cat/shards/indexname?v
+
++ index：所有名称
++ shard：分片数
++ prirep：分片类型，p=pri=primary为主分片，r=rep=replicas为复制分片
++ state：分片状态，STARTED为正常分片，INITIALIZING为异常分片
++ docs：记录数
++ store：存储大小
++ ip：es节点ip
++ node：es节点名称
+
+### 查看异常信息
+
+    GET /_cluster/allocation/explain
+
+unassigned_info.reason 为分片未分配原因
++ INDEX_CREATED	索引创建，由于API创建索引而未分配的
++ CLUSTER_RECOVERED	集群恢复，由于整个集群恢复而未分配
++ INDEX_REOPENED	索引重新打开
++ DANGLING_INDEX_IMPORTED	导入危险的索引
++ NEW_INDEX_RESTORED	重新恢复一个新索引
++ EXISTING_INDEX_RESTORED	重新恢复一个已关闭的索引
++ REPLICA_ADDED	添加副本
++ ALLOCATION_FAILED	分配分片失败
++ NODE_LEFT	集群中节点丢失
++ REROUTE_CANCELLED	reroute命令取消
++ REINITIALIZED	重新初始化
++ REALLOCATED_REPLICA	重新分配副本
