@@ -32,9 +32,13 @@
     - [集群状态](#集群状态)
     - [查看集群状态](#查看集群状态)
     - [查找异常索引](#查找异常索引)
+        - [查看索引并按照主分片大小排序](#查看索引并按照主分片大小排序)
+    - [计算doc](#计算doc)
     - [查看异常信息](#查看异常信息)
     - [查看分片状态](#查看分片状态)
+        - [统计节点主分片数量](#统计节点主分片数量)
     - [查看异常信息](#查看异常信息)
+    - [尝试重新分配](#尝试重新分配)
 
 <!-- /TOC -->
 ## es6.8.23安装
@@ -409,6 +413,14 @@ low
 
     GET _cat/indices
 
+#### 查看索引并按照主分片大小排序
+
+    curl -XGET -u<username:password> 'http://ip:port/ /_cat/indices?v&s=pri.store.size:desc'
+
+### 计算doc
+
+    curl -XGET -u<username:password> 'http://ip:port/_cat/indices?h=docs.count&s=docs.count:desc' | awk '{ sum += $1 } END { print sum }'
+
 ### 查看异常信息
 
     GET /_cluster/allocation/explain
@@ -425,6 +437,10 @@ low
 + store：存储大小
 + ip：es节点ip
 + node：es节点名称
+
+#### 统计节点主分片数量
+
+    curl -s <ip>:9200/_cat/shards |grep -w "p"|awk '{print $7}'|sort |uniq -c
 
 ### 查看异常信息
 
@@ -443,3 +459,7 @@ unassigned_info.reason 为分片未分配原因
 + REROUTE_CANCELLED	reroute命令取消
 + REINITIALIZED	重新初始化
 + REALLOCATED_REPLICA	重新分配副本
+
+### 尝试重新分配
+
+    POST /_cluster/reroute?retry_failed=true
