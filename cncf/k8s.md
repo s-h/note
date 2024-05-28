@@ -27,6 +27,7 @@
     kubectl logs 打印pod和其中容器的日志
     kubectl exec 在pod中的容器上执行命令
     kubectl exec -ti $POD_NAME bash 进入容器shell
+    kubectl api-resources 列出所有API资源类型及其简写、组名、版本和命名空间范围
 
 #### 修改节点roles
 默认node节点roles为none，指定为work：
