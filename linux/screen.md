@@ -15,3 +15,7 @@
 
     screen -d xxx
     然后在使用-r
+
+# 删除会话
+
+    screen -X -S xxx quit
