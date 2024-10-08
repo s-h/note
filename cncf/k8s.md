@@ -1,25 +1,30 @@
 <!-- TOC -->
 
-- [基本命令](#基本命令)
-    - [查看pod和工作节点](#查看pod和工作节点)
-        - [使用kubectl进行故障排除](#使用kubectl进行故障排除)
-        - [修改节点roles](#修改节点roles)
-        - [允许pod调度到master节点](#允许pod调度到master节点)
-    - [cluster details](#cluster-details)
-    - [Deploy an app](#deploy-an-app)
-        - [发布应用](#发布应用)
-        - [查看应用](#查看应用)
-    - [查看pod和工作节点](#查看pod和工作节点)
+    - [基本命令](#基本命令)
         - [pod](#pod)
-        - [work node](#work-node)
-- [服务](#服务)
-    - [服务类型](#服务类型)
-        - [NodePort](#nodeport)
-        - [LoadBalancer](#loadbalancer)
+            - [使用kubectl进行故障排除](#使用kubectl进行故障排除)
+            - [修改节点roles](#修改节点roles)
+            - [允许pod调度到master节点](#允许pod调度到master节点)
+            - [创建pod技巧](#创建pod技巧)
+- [生成pod.yaml文件](#生成podyaml文件)
+- [生成pod.yaml文件](#生成podyaml文件)
+- [查询pod.sepc中的参数](#查询podsepc中的参数)
+        - [cluster details](#cluster-details)
+        - [cluster details](#cluster-details)
+        - [Deploy an app](#deploy-an-app)
+            - [发布应用](#发布应用)
+            - [查看应用](#查看应用)
+        - [查看pod和工作节点](#查看pod和工作节点)
+            - [pod](#pod)
+            - [work node](#work-node)
+    - [服务](#服务)
+        - [服务类型](#服务类型)
+            - [NodePort](#nodeport)
+            - [LoadBalancer](#loadbalancer)
 
 <!-- /TOC -->
 ## 基本命令
-### 查看pod和工作节点
+### pod
 #### 使用kubectl进行故障排除
 
     kubectl get 列出资源
@@ -38,6 +43,14 @@
 
  kubectl taint nodes --all node-role.kubernetes.io/master-
 
+
+#### 创建pod技巧
+```bash
+# 生成pod.yaml文件
+kubectl run podName -- image nginx --image-pull-policy IfNotPresent --dry-run=client -o yaml > pod.yaml
+# 查询pod.sepc中的参数
+kubectl explain pod.spec
+```
 ### cluster details
 查看集群状态:
 
