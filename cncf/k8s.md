@@ -47,6 +47,8 @@ Pod 为特定于应用程序的“逻辑主机”建模，并且可以包含相�
     
     # 查看pod及容器名称
     kubectl get pod my-pod -o custom-columns=NAME:.metadata.name,CONTAINERS:.spec.containers[*].name
+    # 根据标签查看pod
+    kubectl get pod -l foo=bar
 
 #### kubectl top pod
 
