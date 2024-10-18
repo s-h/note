@@ -19,6 +19,9 @@
         - [异常处理（熔断） outlierDetection](#异常处理熔断-outlierdetection)
     - [serviceEntry](#serviceentry)
     - [Sidecar](#sidecar)
+    - [workloadEntry](#workloadentry)
+- [在vm上需要将pod的路由指向istio-ingressgateway所在的node节点](#在vm上需要将pod的路由指向istio-ingressgateway所在的node节点)
+- [安装下载的deb](#安装下载的deb)
 
 <!-- /TOC -->
 # Istio介绍与安装
@@ -234,3 +237,59 @@ spec:
 
 ## Sidecar
 **Sidecar** 默认重置所有pod里的envoy设置，也可以设置影响特定的pod。 一个命名空间里只能有一个sidecar。
+
+## workloadEntry
+[工作负载条目简介：桥接 Kubernetes 和 VM](https://istio.io/latest/zh/blog/2020/workload-entry/)
+
+目的是把其他主机纳入到service mesh中
+```bash
+: #在安装istiod的时候，启用自动注册的功能。
+$ istioctl install --set values.pilot.env.PILOT_ENABLE_WORKLOAD_ENTRY_AUTOREGISTRATION=true
+: # 虚拟机安装istio-sidecar
+$ wget https://storage.googleapis.com/istio-release/releases/1.xx.x/deb/istio-sidecar.deb # 或者.rpm 后进行安装
+# 在vm上需要将pod的路由指向istio-ingressgateway所在的node节点
+$ route add -net <pod网段> gw <istio-ingressagteway IP> netmask <netmask>
+# 安装下载的deb
+$ dpkg -i istio-sidecar.deb
+```
+
+k8s上创建WorkLoadGroup
+```yaml
+apiVersion: networking.istio.io/v1
+kind: WorkloadGroup
+metadata:
+  name: mywg
+  namespace: appspace
+spec:
+  metadata:
+    labels:
+      app: vm-app
+  template:
+    ports: {}
+    serviceAccount: default
+
+: # 应用这个WorkLoadGroup会生成
+$ kubectl appy -f xx.yaml
+```
+
+生成证书
+```bash
+: # 生成vm所需要的证书， k8s上操作
+$ mkdir vm-cert
+$ istioctl x workload entry configure -f xx.yaml -o vm-cert
+: # 将生成证书拷贝到vm上, vm上操作
+: # 安装根证书
+$ mkdir -p /etc/certs
+$ cp root-cert.pem /etc/certs
+: # 安装令牌
+$ mkdir -p /var/run/secrets/tokens
+$ cp cluster.env /var/run/secrets/tokens
+: # 将网格安装到/etc/istio/config/mesh
+$ cp mesh.yaml /etc/istio/config/mesh
+$ mkdir -p /etc/istio/proxy
+$ chown -R istio-proxy /var/lib/istio /etc/certs /etc/istio/proxy /etc/istio/config/var/run/secrets 
+: # 修改/etc/hosts
+x.x.x.x istiod.istio-system.svc
+: # 启动istio
+$ systemctl start isito
+```
