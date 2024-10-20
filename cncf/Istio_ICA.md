@@ -1,30 +1,5 @@
-<!-- TOC -->
 
-- [Istio介绍与安装](#istio介绍与安装)
-    - [自动注入](#自动注入)
-        - [命名空间指定标签](#命名空间指定标签)
-        - [有些命名空间不会自动注入](#有些命名空间不会自动注入)
-        - [有些命名空间不会自动注入](#有些命名空间不会自动注入)
-        - [单独给pod进行注入](#单独给pod进行注入)
-- [istio配置管理](#istio配置管理)
-- [istio配置管理](#istio配置管理)
-    - [gateway](#gateway)
-    - [virtualService](#virtualservice)
-    - [DestinationRule](#destinationrule)
-        - [流量发送到不同pod](#流量发送到不同pod)
-        - [是否启用tls](#是否启用tls)
-        - [LB算法](#lb算法)
-        - [哈希一致性算法](#哈希一致性算法)
-        - [连接池 connectionPool](#连接池-connectionpool)
-        - [异常处理（熔断） outlierDetection](#异常处理熔断-outlierdetection)
-    - [serviceEntry](#serviceentry)
-    - [Sidecar](#sidecar)
-    - [workloadEntry](#workloadentry)
-- [在vm上需要将pod的路由指向istio-ingressgateway所在的node节点](#在vm上需要将pod的路由指向istio-ingressgateway所在的node节点)
-- [安装下载的deb](#安装下载的deb)
-
-<!-- /TOC -->
-# Istio介绍与安装
+# 流量管理
 ## 自动注入
 ### 命名空间指定标签
 给命名空间添加标签，指示 Istio 在部署应用的时候，自动注入 Envoy Sidecar 代理
@@ -242,18 +217,8 @@ spec:
 [工作负载条目简介：桥接 Kubernetes 和 VM](https://istio.io/latest/zh/blog/2020/workload-entry/)
 
 目的是把其他主机纳入到service mesh中
-```bash
-: #在安装istiod的时候，启用自动注册的功能。
-$ istioctl install --set values.pilot.env.PILOT_ENABLE_WORKLOAD_ENTRY_AUTOREGISTRATION=true
-: # 虚拟机安装istio-sidecar
-$ wget https://storage.googleapis.com/istio-release/releases/1.xx.x/deb/istio-sidecar.deb # 或者.rpm 后进行安装
-# 在vm上需要将pod的路由指向istio-ingressgateway所在的node节点
-$ route add -net <pod网段> gw <istio-ingressagteway IP> netmask <netmask>
-# 安装下载的deb
-$ dpkg -i istio-sidecar.deb
-```
 
-k8s上创建WorkLoadGroup
+### k8s上创建WorkLoadGroup
 ```yaml
 apiVersion: networking.istio.io/v1
 kind: WorkloadGroup
@@ -271,12 +236,24 @@ spec:
 : # 应用这个WorkLoadGroup会生成
 $ kubectl appy -f xx.yaml
 ```
+### 开启自动注册，vm安装istio-sidecar
+```bash
+: #在安装istiod的时候，启用自动注册的功能。
+$ istioctl install --set values.pilot.env.PILOT_ENABLE_WORKLOAD_ENTRY_AUTOREGISTRATION=true
+: # 虚拟机安装istio-sidecar
+$ wget https://storage.googleapis.com/istio-release/releases/1.xx.x/deb/istio-sidecar.deb # 或者.rpm 后进行安装
+: # 在vm上需要将pod的路由指向istio-ingressgateway所在的node节点
+$ route add -net <pod网段> gw <istio-ingressagteway IP> netmask <netmask>
+: # 安装下载的deb
+$ dpkg -i istio-sidecar.deb
+```
 
 生成证书
 ```bash
 : # 生成vm所需要的证书， k8s上操作
 $ mkdir vm-cert
 $ istioctl x workload entry configure -f xx.yaml -o vm-cert
+
 : # 将生成证书拷贝到vm上, vm上操作
 : # 安装根证书
 $ mkdir -p /etc/certs
@@ -289,7 +266,176 @@ $ cp mesh.yaml /etc/istio/config/mesh
 $ mkdir -p /etc/istio/proxy
 $ chown -R istio-proxy /var/lib/istio /etc/certs /etc/istio/proxy /etc/istio/config/var/run/secrets 
 : # 修改/etc/hosts
-x.x.x.x istiod.istio-system.svc
+x.x.x.x istiod.istio-system.svc # 前面的IP是istio-system里istiod这个pod的IP
 : # 启动istio
-$ systemctl start isito
+$ systemctl enable isito --now
+: # 查看日志
+$ tail -f /var/log/istio/istio.log
 ```
+### 创建WorkLoadEntry
+```yaml
+apiVersion: networking.istio.io/v1
+kind: WorkloadEntry
+metadata:
+  name: my-vm
+  namespace: appspace
+spec:
+  # use of the service account indicates that the workload has a
+  # sidecar proxy bootstrapped with this service account. Pods with
+  # sidecars will automatically communicate with the workload using
+  # istio mutual TLS.
+  serviceAccount: 
+  address: 
+  labels:
+    app: details-legacy
+    instance-id: vm1
+```
+### 创建svc
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: vm-service
+  namespace: appspace
+spec:
+  selector:
+    app: details-legacy  # 和WorkLoadEntry的标签对应
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+```
+
+### 创建VirtualService
+```yaml
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: my-virtual-service
+  namespace: appspace
+spec:
+  hosts:
+    - "vmapp.jianghao.tech"
+  gateways:
+    - vm-gateway  # 如果内部网格使用不需要关联gateway
+  http:
+  - route:
+    - destination:
+        host: vm-service  # 对应上一步创建的svc
+```
+### 创建gateway
+如从外部访问vm网格，需要创建vs关联的网关
+```yaml
+kind: Gateway
+metadata:
+  name: vm-gateway
+  namespace: appspace
+spec:
+  selector:
+    app: vm-gateway-controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "vmapp.jianghao.tech"
+```
+# 安全管理
+## 生成证书
+生成证书的两种方式：自签名、购买
+
+```bash
+: # 将证书放入该目录(私钥、公钥  )
+$ mkdir -p /etc/istio/ingressgateway-certs/
+: # 将秘钥对写入secret
+$ kubectl create secret generic istio-ingressgateway-certs --fromfile /etc/istio/ingressgateway-certs/xx.key --from-file /etc/istio/ingressgateway-certs/xx.crt -n istio-system
+```
+配置gateway
+[gateway](https://istio.io/latest/zh/docs/reference/config/networking/gateway/)
+```yaml
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: my-gateway
+  namespace: some-config-namespace
+spec:
+  selector:
+    app: my-gateway-controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - uk.bookinfo.com
+    - eu.bookinfo.com
+    tls:
+      httpsRedirect: true # sends 301 redirect for http requests
+  - port:
+      number: 443
+      name: https-443
+      protocol: HTTPS
+    hosts:
+    - uk.bookinfo.com
+    - eu.bookinfo.com
+    tls:
+      mode: SIMPLE # enables HTTPS on this port
+      serverCertificate: /etc/certs/servercert.pem
+      privateKey: /etc/certs/privatekey.pem
+```
+## PeerAuthentication
+
+两个对象进行通讯的时候，是否必须进行mTLS认证
+```yaml
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: foo
+spec:
+  mtls:
+    mode: STRICT # 必须建立吗TLS; 默认值为PERMISSIVE，能建立就建立; DISABLE
+```
+```yaml
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: foo
+spec:
+  selector:
+    matchLabels:
+      app: finance
+  mtls:
+    mode: STRICT
+  portLevelMtls:  # 指定端口证书模式
+    8080:    
+      mode: DISABLE
+```
+## AuthorizationPolicy
+客户端访问策略，哪些客户端能访问，哪些客户端不能访问
+
+写了允许规则，只要没有明确允许的都是拒绝的
+```yaml
+: # 拒绝所有
+kind: AuthorizationPolicy
+metadata:
+  name: default-deny-all
+spec: 
+  {} 
+---
+: # 允许所有
+kind: AuthorizationPolicy
+metadata:
+  name: default-allow-all
+spec: 
+  rules:
+  - {}
+```
+## RequestAuthenticaiton
+必须经过认证才能放问成功，必须要出示TOKEN(JWT)
+# envoy
+[envoy官方文档](https://www.envoyproxy.io/docs)
+在isito环境中可以使用envoyFilter修改envoy规则

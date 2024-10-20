@@ -1,0 +1,1 @@
+**cert-manager** 是k8s上证书管理工具，可以实现[利用cert-manager基于ACEME协议与Let's Encrypt来签发免费证书自动续期](https://www.cnblogs.com/tencent-cloud-native/p/13883790.html)
