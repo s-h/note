@@ -1,33 +1,69 @@
+<!-- vscode-markdown-toc -->
+* [自动注入](#)
+	* [命名空间指定标签](#-1)
+	* [有些命名空间不会自动注入](#-1)
+	* [单独给pod进行注入](#pod)
+* [gateway](#gateway)
+* [virtualService](#virtualService)
+* [DestinationRule](#DestinationRule)
+	* [流量发送到不同pod](#pod-1)
+	* [是否启用tls](#tls)
+	* [LB算法](#LB)
+	* [哈希一致性算法](#-1)
+	* [连接池 connectionPool](#connectionPool)
+	* [异常处理（熔断） outlierDetection](#outlierDetection)
+* [serviceEntry](#serviceEntry)
+* [Sidecar](#Sidecar)
+* [workloadEntry](#workloadEntry)
+	* [k8s上创建WorkLoadGroup](#k8sWorkLoadGroup)
+	* [开启自动注册，vm安装istio-sidecar](#vmistio-sidecar)
+	* [创建WorkLoadEntry](#WorkLoadEntry)
+	* [创建svc](#svc)
+	* [创建VirtualService](#VirtualService)
+	* [创建gateway](#gateway-1)
+* [生成证书](#-1)
+* [PeerAuthentication](#PeerAuthentication)
+* [AuthorizationPolicy](#AuthorizationPolicy)
+* [RequestAuthenticaiton](#RequestAuthenticaiton)
+
+<!-- vscode-markdown-toc-config
+	numbering=false
+	autoSave=true
+	/vscode-markdown-toc-config -->
+<!-- /vscode-markdown-toc -->
+
+
+
 
 # 流量管理
-## 自动注入
-### 命名空间指定标签
+## <a name=''></a>自动注入
+### <a name='-1'></a>命名空间指定标签
 给命名空间添加标签，指示 Istio 在部署应用的时候，自动注入 Envoy Sidecar 代理
 ```bash
 : #添加标签
 kubectl label namespace default istio-injection=enabled
 ```
-### 有些命名空间不会自动注入
+### <a name='-1'></a>有些命名空间不会自动注入
 + kube-system命名空间里的pod
 + 使用宿主机网络的pod不会自动注入（hostNetwork: true）
 + 手动给pod指定了一个标签sidecar.istio.io/inject: "false"
 
-### 单独给pod进行注入
+### <a name='pod'></a>单独给pod进行注入
 ```bash
 istioctl kube-inject -f pod.yaml > pod-injected.yaml; kubectl apply -f pod-injected.yaml
 : #或者
 istioctl kube-inject -f pod.yaml | kubectl apply -f - -n namespace
 ```
 # istio配置管理
-## gateway
+## <a name='gateway'></a>gateway
 **网关**管理网格的入站和出站流量
 + istio-ingressagteway 入口网关
 + istio-egressgateway 出口网关
-## virtualService
+## <a name='virtualService'></a>virtualService
 **VirtualService**及**虚拟服务**作用在svc上，可以指定路由规则，可以指定负载均衡策略。
-## DestinationRule
+## <a name='DestinationRule'></a>DestinationRule
 **DestinationRule**及**目标规则**作用在svc和pod之间
-### 流量发送到不同pod
+### <a name='pod-1'></a>流量发送到不同pod
 ```yaml
 apiVersion: networking.istio.io/v1
 kind: VirtualService
@@ -62,7 +98,7 @@ spec:
       version: v2
 ```
 
-### 是否启用tls
+### <a name='tls'></a>是否启用tls
 禁用tls
 ```yaml
 apiVersion: networking.istio.io/v1
@@ -80,7 +116,7 @@ spec:
 + MUTUAL：启用TLS，并且客户端也验证服务端
 + ISTIO_MUTUAL：启用 mutual TLS，并且客户端也验证服务端。与Mutual模式相比，此模式使用Istio自动生成证书进行mTLS身份验证。
 
-### LB算法
+### <a name='LB'></a>LB算法
 默认k8s的service是轮询，istio的service是随机。可以指定转发算法。
 ```yaml
 apiVersion: networking.istio.io/v1
@@ -100,7 +136,7 @@ spec:
 + LAST_REQUSULT 最少请求负载均衡器将负载分散到终端节点，优先支持未完成请求最少的终端节点。这通常更安全，并且在几乎所有情况下都优于 ROUND_ROBIN。 
 + LAST_CONN 已弃用
 
-### 哈希一致性算法
+### <a name='-1'></a>哈希一致性算法
 https://istio.io/latest/zh/docs/reference/config/networking/destination-rule/#LoadBalancerSettings-ConsistentHahttp
 ```yaml
 apiVersion: networking.istio.io/v1
@@ -121,7 +157,7 @@ cookie中含有name=user的cookie，则在ttl时间内转发到同一个pod
 curl -H "Cookie: user=jianghao" http://ratings.prod.svc.cluster.local/ratings/1
 ```
 
-### 连接池 connectionPool
+### <a name='connectionPool'></a>连接池 connectionPool
 **连接数** 客户端想服务端发请求，需要建立TCP连接，那么建立TCP连接的数量就是连接数
 **并发连接数（SBC）** 每秒建立的TCP连接数
 **请求数** 客户端建立连接后，先服务端发送GET/POST/HEAD数据包，服务器返回结果两种情况：
@@ -154,7 +190,7 @@ spec:
         maxRetries: 3 #在给定的时间，集群所有主机最大重试数，默认值3
 ```
 
-### 异常处理（熔断） outlierDetection
+### <a name='outlierDetection'></a>异常处理（熔断） outlierDetection
 https://istio.io/latest/zh/docs/reference/config/networking/destination-rule/#OutlierDetection
 ```yaml
 apiVersion: networking.istio.io/v1
@@ -176,7 +212,7 @@ spec:
       baseEjectionTime: 15m     # 指定来一个实例被踢掉以后，最少多长时间之后加回来，如果连续触发熔断，熔断的时长会乘以响应的倍数，时间默认为30秒
 ```
 
-## serviceEntry
+## <a name='serviceEntry'></a>serviceEntry
 
 配置外部服务, 网格内访问网格外
 ```yaml
@@ -210,15 +246,15 @@ spec:
         host: www.jianghao.tech
   ```
 
-## Sidecar
+## <a name='Sidecar'></a>Sidecar
 **Sidecar** 默认重置所有pod里的envoy设置，也可以设置影响特定的pod。 一个命名空间里只能有一个sidecar。
 
-## workloadEntry
+## <a name='workloadEntry'></a>workloadEntry
 [工作负载条目简介：桥接 Kubernetes 和 VM](https://istio.io/latest/zh/blog/2020/workload-entry/)
 
 目的是把其他主机纳入到service mesh中
 
-### k8s上创建WorkLoadGroup
+### <a name='k8sWorkLoadGroup'></a>k8s上创建WorkLoadGroup
 ```yaml
 apiVersion: networking.istio.io/v1
 kind: WorkloadGroup
@@ -236,7 +272,7 @@ spec:
 : # 应用这个WorkLoadGroup会生成
 $ kubectl appy -f xx.yaml
 ```
-### 开启自动注册，vm安装istio-sidecar
+### <a name='vmistio-sidecar'></a>开启自动注册，vm安装istio-sidecar
 ```bash
 : #在安装istiod的时候，启用自动注册的功能。
 $ istioctl install --set values.pilot.env.PILOT_ENABLE_WORKLOAD_ENTRY_AUTOREGISTRATION=true
@@ -272,7 +308,7 @@ $ systemctl enable isito --now
 : # 查看日志
 $ tail -f /var/log/istio/istio.log
 ```
-### 创建WorkLoadEntry
+### <a name='WorkLoadEntry'></a>创建WorkLoadEntry
 ```yaml
 apiVersion: networking.istio.io/v1
 kind: WorkloadEntry
@@ -290,7 +326,7 @@ spec:
     app: details-legacy
     instance-id: vm1
 ```
-### 创建svc
+### <a name='svc'></a>创建svc
 ```yaml
 apiVersion: v1
 kind: Service
@@ -307,7 +343,7 @@ spec:
       targetPort: 80
 ```
 
-### 创建VirtualService
+### <a name='VirtualService'></a>创建VirtualService
 ```yaml
 apiVersion: networking.istio.io/v1
 kind: VirtualService
@@ -324,7 +360,7 @@ spec:
     - destination:
         host: vm-service  # 对应上一步创建的svc
 ```
-### 创建gateway
+### <a name='gateway-1'></a>创建gateway
 如从外部访问vm网格，需要创建vs关联的网关
 ```yaml
 kind: Gateway
@@ -343,7 +379,7 @@ spec:
     - "vmapp.jianghao.tech"
 ```
 # 安全管理
-## 生成证书
+## <a name='-1'></a>生成证书
 生成证书的两种方式：自签名、购买
 
 ```bash
@@ -385,7 +421,7 @@ spec:
       serverCertificate: /etc/certs/servercert.pem
       privateKey: /etc/certs/privatekey.pem
 ```
-## PeerAuthentication
+## <a name='PeerAuthentication'></a>PeerAuthentication
 
 两个对象进行通讯的时候，是否必须进行mTLS认证
 ```yaml
@@ -414,7 +450,7 @@ spec:
     8080:    
       mode: DISABLE
 ```
-## AuthorizationPolicy
+## <a name='AuthorizationPolicy'></a>AuthorizationPolicy
 客户端访问策略，哪些客户端能访问，哪些客户端不能访问
 
 写了允许规则，只要没有明确允许的都是拒绝的
@@ -434,7 +470,7 @@ spec:
   rules:
   - {}
 ```
-## RequestAuthenticaiton
+## <a name='RequestAuthenticaiton'></a>RequestAuthenticaiton
 必须经过认证才能放问成功，必须要出示TOKEN(JWT)
 # envoy
 [envoy官方文档](https://www.envoyproxy.io/docs)
