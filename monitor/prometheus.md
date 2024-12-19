@@ -25,3 +25,9 @@ sum(
   sum_over_time(foo{bar="xxx"}[$__range])
 )
 ```
+
+## 计算过去5分钟 gauge类型指标过去5分钟内的最大值
+
+```yaml
+max_over_time(foo[5m])
+```
