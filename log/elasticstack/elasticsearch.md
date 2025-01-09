@@ -15,30 +15,30 @@
 * 3. [cluster管理](#cluster)
 	* 3.1. [ 副本磁盘空间检查](#-1)
 	* 3.2. [处理副本异常](#-1)
-* 4. [查看集群默认配置](#-1)
-* 5. [数据管理](#-1)
-	* 5.1. [计算集群文档数量](#-1)
-	* 5.2. [数据插入](#-1)
-	* 5.3. [查询数据](#-1)
-		* 5.3.1. [指标聚合](#-1)
-	* 5.4. [删除数据](#-1)
-* 6. [分片、索引管理](#-1)
-	* 6.1. [移动分片](#-1)
-	* 6.2. [修复索引只读](#-1)
-* 7. [curl](#curl)
-	* 7.1. [使用用户名密码访问](#-1)
-* 8. [默认分片副本设置（6.x）](#6.x)
-* 9. [ES故障排查](#ES)
-	* 9.1. [集群状态](#-1)
-	* 9.2. [查看集群状态](#-1)
-	* 9.3. [查找异常索引](#-1)
-		* 9.3.1. [查看索引并按照主分片大小排序](#-1)
-	* 9.4. [计算doc](#doc)
-	* 9.5. [查看异常信息](#-1)
-	* 9.6. [查看分片状态](#-1)
-		* 9.6.1. [统计节点主分片数量](#-1)
-	* 9.7. [查看异常信息](#-1)
-	* 9.8. [尝试重新分配](#-1)
+	* 3.3. [查看集群默认配置](#-1)
+* 4. [数据管理](#-1)
+	* 4.1. [计算集群文档数量](#-1)
+	* 4.2. [数据插入](#-1)
+	* 4.3. [查询数据](#-1)
+		* 4.3.1. [指标聚合](#-1)
+	* 4.4. [删除数据](#-1)
+* 5. [分片、索引管理](#-1)
+	* 5.1. [移动分片](#-1)
+	* 5.2. [修复索引只读](#-1)
+* 6. [curl](#curl)
+	* 6.1. [使用用户名密码访问](#-1)
+* 7. [默认分片副本设置（6.x）](#6.x)
+* 8. [ES故障排查](#ES)
+	* 8.1. [集群状态](#-1)
+	* 8.2. [查看集群状态](#-1)
+	* 8.3. [查找异常索引](#-1)
+		* 8.3.1. [查看索引并按照主分片大小排序](#-1)
+	* 8.4. [计算doc](#doc)
+	* 8.5. [查看异常信息](#-1)
+	* 8.6. [查看分片状态](#-1)
+		* 8.6.1. [统计节点主分片数量](#-1)
+	* 8.7. [查看异常信息](#-1)
+	* 8.8. [尝试重新分配](#-1)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -269,13 +269,13 @@ low
   GET _cluster/allocation/explain
   POST /_cluster/reroute?retry_failed=true
 
-##  4. <a name='-1'></a>查看集群默认配置
+###  3.3. <a name='-1'></a>查看集群默认配置
 
   GET _cluster/settings?include_default=true&pretty
 
 
-##  5. <a name='-1'></a>数据管理
-###  5.1. <a name='-1'></a>计算集群文档数量
+##  4. <a name='-1'></a>数据管理
+###  4.1. <a name='-1'></a>计算集群文档数量
 
     GET _count?pretty
     {
@@ -284,7 +284,7 @@ low
         }
     }
 
-###  5.2. <a name='-1'></a>数据插入
+###  4.2. <a name='-1'></a>数据插入
 
     PUT /indexname/typename/id
     {
@@ -295,7 +295,7 @@ low
         "interests": [ "sports", "music" ]
     }
 
-###  5.3. <a name='-1'></a>查询数据
+###  4.3. <a name='-1'></a>查询数据
 
     GET filebeat-6.2.4-2019.08.19/_search
     {
@@ -311,7 +311,7 @@ low
     curl  -H "Content-Type: application/json" -XGET http://x.x.x.x:9200/indexname/_search?pretty -d ' {"query":{"match_all":{}}}'
 
 
-####  5.3.1. <a name='-1'></a>指标聚合
+####  4.3.1. <a name='-1'></a>指标聚合
 相当于msyql聚合函数
 
 	max
@@ -338,7 +338,7 @@ low
       }
     }
 
-###  5.4. <a name='-1'></a>删除数据
+###  4.4. <a name='-1'></a>删除数据
 
     GET test/_delete_by_query
     {
@@ -349,8 +349,8 @@ low
         }
     }
 
-##  6. <a name='-1'></a>分片、索引管理
-###  6.1. <a name='-1'></a>移动分片
+##  5. <a name='-1'></a>分片、索引管理
+###  5.1. <a name='-1'></a>移动分片
 
     _cluster/reroute
     {
@@ -364,18 +364,18 @@ low
                 }]
     }
 
-###  6.2. <a name='-1'></a>修复索引只读
+###  5.2. <a name='-1'></a>修复索引只读
 
     PUT apm*/_settings  
     {
         "index.blocks.read_only_allow_delete": null
     }
-##  7. <a name='curl'></a>curl
-###  7.1. <a name='-1'></a>使用用户名密码访问
+##  6. <a name='curl'></a>curl
+###  6.1. <a name='-1'></a>使用用户名密码访问
 
     curl --user ops:user@password http://192.168.1.100:9200/_cat/
 
-##  8. <a name='6.x'></a>默认分片副本设置（6.x）
+##  7. <a name='6.x'></a>默认分片副本设置（6.x）
 
     GET _template/default_template
 
@@ -388,14 +388,14 @@ low
     }
     }
 
-##  9. <a name='ES'></a>ES故障排查
+##  8. <a name='ES'></a>ES故障排查
 [Elasticsearch集群异常状态（RED、YELLOW）原因分析](https://cloud.tencent.com/developer/article/1803943?from_column=20421&from=20421)
-###  9.1. <a name='-1'></a>集群状态
+###  8.1. <a name='-1'></a>集群状态
 + GREEN 主分片和副本分片都已分配，Elasticsearch集群是100%可用的
 + YELLOW 主分片可用，但是副本分片不可用, 但至少还有一个副本是未分配的。不会有数据丢失
 + RED 存在不可用的主分片。此时执行查询虽然部分数据仍然可以查到，但实际上已经影响到索引读写，需要重点关注。这种情况Elasticsearch集群至少一个主分片（以及它的全部副本）都在缺失中。这意味着索引已缺少数据，搜索只能返回部分数据，而分配到这个分片上的请求都返回异常
 
-###  9.2. <a name='-1'></a>查看集群状态
+###  8.2. <a name='-1'></a>查看集群状态
 
     _cluster/health
 
@@ -418,23 +418,23 @@ low
 + task_max_waiting_in_queue_millis	自最早的初始化任务等待执行以来的时间（以毫秒为单位）
 + active_shards_percent_as_number	群集中活动碎片的比率，以百分比表示
 
-###  9.3. <a name='-1'></a>查找异常索引
+###  8.3. <a name='-1'></a>查找异常索引
 
     GET _cat/indices
 
-####  9.3.1. <a name='-1'></a>查看索引并按照主分片大小排序
+####  8.3.1. <a name='-1'></a>查看索引并按照主分片大小排序
 
     curl -XGET -u<username:password> 'http://ip:port/ /_cat/indices?v&s=pri.store.size:desc'
 
-###  9.4. <a name='doc'></a>计算doc
+###  8.4. <a name='doc'></a>计算doc
 
     curl -XGET -u<username:password> 'http://ip:port/_cat/indices?h=docs.count&s=docs.count:desc' | awk '{ sum += $1 } END { print sum }'
 
-###  9.5. <a name='-1'></a>查看异常信息
+###  8.5. <a name='-1'></a>查看异常信息
 
     GET /_cluster/allocation/explain
 
-###  9.6. <a name='-1'></a>查看分片状态
+###  8.6. <a name='-1'></a>查看分片状态
 
     GET _cat/shards/indexname?v
 
@@ -447,11 +447,11 @@ low
 + ip：es节点ip
 + node：es节点名称
 
-####  9.6.1. <a name='-1'></a>统计节点主分片数量
+####  8.6.1. <a name='-1'></a>统计节点主分片数量
 
     curl -s <ip>:9200/_cat/shards |grep -w "p"|awk '{print $7}'|sort |uniq -c
 
-###  9.7. <a name='-1'></a>查看异常信息
+###  8.7. <a name='-1'></a>查看异常信息
 
     GET /_cluster/allocation/explain
 
@@ -469,6 +469,6 @@ unassigned_info.reason 为分片未分配原因
 + REINITIALIZED	重新初始化
 + REALLOCATED_REPLICA	重新分配副本
 
-###  9.8. <a name='-1'></a>尝试重新分配
+###  8.8. <a name='-1'></a>尝试重新分配
 
     POST /_cluster/reroute?retry_failed=true
