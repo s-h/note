@@ -32,7 +32,7 @@
 
 ### 查看所有消费组
 
-    ./kafka-consumer-groups.sh --all-groups --bootstrap-server localhost:9092  --list
+    ./kafka-consumer-groups.sh --bootstrap-server localhost:9092  --list
 
 ### 查看消费组
 
