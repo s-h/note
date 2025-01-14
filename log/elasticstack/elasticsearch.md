@@ -14,8 +14,9 @@
 		* 2.2.5. [恢复快照](#-1)
 * 3. [cluster管理](#cluster)
 	* 3.1. [ 副本磁盘空间检查](#-1)
-	* 3.2. [处理副本异常](#-1)
-	* 3.3. [查看集群默认配置](#-1)
+	* 3.2. [水位控制：](#-1)
+	* 3.3. [处理副本异常](#-1)
+	* 3.4. [查看集群默认配置](#-1)
 * 4. [数据管理](#-1)
 	* 4.1. [计算集群文档数量](#-1)
 	* 4.2. [数据插入](#-1)
@@ -251,27 +252,36 @@ wait_for_completion 将参数设置为false会执行一些预执行检查，启�
       }
     }
 
-精确控制：
-low
+###  3.2. <a name='-1'></a>水位控制：
 
-    PUT _cluster/settings
-    {
+```bash
+    : #临时
+    curl -H "Content-type: application/json" -XPUT x.x.x.x:9200/_cluster/settings -d '{
       "transient": {
         "cluster.routing.allocation.disk.watermark.low": "100gb",
         "cluster.routing.allocation.disk.watermark.high": "50gb",
-        "cluster.routing.allocation.disk.watermark.flood_stage": "10gb",
-        "cluster.info.update.interval": "1m"
+        "cluster.routing.allocation.disk.watermark.flood_stage": "10gb"
       }
-    }
+    }'
 
-###  3.2. <a name='-1'></a>处理副本异常
+    : #持久化配置，重启依然生效
+    curl -H "Content-type: application/json" -XPUT x.x.x.x:9200/_cluster/settings -d '{
+      "persisitent": {
+        "cluster.routing.allocation.disk.watermark.low": "100gb",
+        "cluster.routing.allocation.disk.watermark.high": "50gb",
+        "cluster.routing.allocation.disk.watermark.flood_stage": "10gb"
+      }
+    }'
+```
+
+###  3.3. <a name='-1'></a>处理副本异常
 
   GET _cluster/allocation/explain
   POST /_cluster/reroute?retry_failed=true
 
-###  3.3. <a name='-1'></a>查看集群默认配置
+###  3.4. <a name='-1'></a>查看集群默认配置
 
-  GET _cluster/settings?include_default=true&pretty
+  GET _cluster/settings?include_defaults=true&pretty
 
 
 ##  4. <a name='-1'></a>数据管理
@@ -366,7 +376,16 @@ low
 
 ###  5.2. <a name='-1'></a>修复索引只读
 
+```bash
+    : #检查索引是否有只读
+    GET _all/_settings |python -m json.tool |grep read_only 
+    : #修改指定索引只读
     PUT apm*/_settings  
+    {
+        "index.blocks.read_only_allow_delete": null
+    }
+    : #修改全部索引只读
+    PUT _all/_settings  
     {
         "index.blocks.read_only_allow_delete": null
     }
