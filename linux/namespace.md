@@ -14,3 +14,19 @@ NS TYPE NPROCS   PID USER     NETNSID NSFS                                      
 
 nsenter -t <pid> -n netstat -anp |grep xxx
 ```
+
+# 批量查询一个主机所有网络命名空间连接
+netstat查看网络连接查看的是默认的命名空间，如果有程序如容器使用其他命名空间则需要配合nsenter
+```bash
+while ture do; do
+    date
+    pid=$(lsns -t net |grep -v PID | awk '{print $4}')
+    for i in $pid;do
+        echo $i
+        nsenter -t $i -n netstat -nap |grep xxx
+        echo "==="
+    done 
+    sleep 60
+done
+```
+也可使用此工具https://github.com/s-h/netnsrun
