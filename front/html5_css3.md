@@ -636,3 +636,7 @@ clear: left | right | both;
 2. 自身属性：width/height/margin/padding/border/background
 3. 文本属性：color/font/text-decoration/text-align/vertical-align/white-space/break-word
 4. 其他属性（css3）：content/cursor/border-radius/box-shadow/text-shadow/background:linear-gradient`
+
+## 案例
+### 确定版心
+这个页面版心是1200像素，每个版心都要水平居中对齐，可以定义版心公共类：
