@@ -60,6 +60,14 @@
 		* 11.3.2. [边偏移](#-1)
 		* 11.3.3. [定位的扩展](#-1)
 * 12. [css书写顺序](#css-1)
+* 13. [网页布局总结](#-1)
+	* 13.1. [标准流](#-1)
+	* 13.2. [浮动](#-1)
+	* 13.3. [定位](#-1)
+* 14. [元素的显示与隐藏](#-1)
+	* 14.1. [display](#display)
+	* 14.2. [visibility](#visibility)
+	* 14.3. [overflow](#overflow)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -720,31 +728,31 @@ clear: left | right | both;
 3. 文本属性：color/font/text-decoration/text-align/vertical-align/white-space/break-word
 4. 其他属性（css3）：content/cursor/border-radius/box-shadow/text-shadow/background:linear-gradient`
 
-## 网页布局总结
+##  13. <a name='-1'></a>网页布局总结
 通过盒子模型，清楚知道大部分html标签是一个盒子
 通过css浮动、定位可以让每个盒子排列成为网页。
 一个完整的网页，是标准流、浮动、定位一起完成布局的，每个都有自己的专门用法
-### 标准流
+###  13.1. <a name='-1'></a>标准流
 可以让盒子上下排列或者左右排列，垂直的快级盒子显示就是用标准流布局
-### 浮动
+###  13.2. <a name='-1'></a>浮动
 可以让多个块级元素一行显示或者左右对齐盒子，多个块级盒子水平显示就用浮动布局
-### 定位
+###  13.3. <a name='-1'></a>定位
 定位最大的特点是有层叠的概念，就是可以让多个盒子前后叠压来显示。如果元素自由在某个盒子内移动就用定位布局。
 
-## 元素的显示与隐藏
+##  14. <a name='-1'></a>元素的显示与隐藏
 类似网站广告，当我们点击关闭就不见了，但是我们重新刷新页面，会重新出现
 本质：让一个元素在页面中隐藏或者显示出来
-### display
+###  14.1. <a name='display'></a>display
 display属性用于设置一个元素应如何显示
 display: none; 隐藏对象
 display隐藏对象后，不再占有原来的位置
 应用广泛，配合JS可以做很多网页特效
 
-### visibility
+###  14.2. <a name='visibility'></a>visibility
 visibility: hidden; 元素隐藏
 visibility: visible; 元素可视
 visibility隐藏元素后继续占有原来的位置
-### overflow
+###  14.3. <a name='overflow'></a>overflow
 overflow属性指定了如果内容溢出了一个元素的框（超过其指定高度及宽度）时，会发生什么。
 | 属性值  | 描述                                   |
 | ------- | -------------------------------------- |
@@ -758,4 +766,3 @@ overflow属性指定了如果内容溢出了一个元素的框（超过其指定
 浮动元素不同，只会压住它下面标准流的盒子，但是不会压住下面标准流盒子里面的文字
 但是绝对定位（固定定位）会压住下面标准流所有的内容
 浮动之所以不会压住文字，因为浮动产生的目的最初是为了做文字环绕效果的。文字会围绕浮动元素。
-##  12. <a name='css-1'></a>css书写顺序
