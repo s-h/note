@@ -766,3 +766,93 @@ overflow属性指定了如果内容溢出了一个元素的框（超过其指定
 浮动元素不同，只会压住它下面标准流的盒子，但是不会压住下面标准流盒子里面的文字
 但是绝对定位（固定定位）会压住下面标准流所有的内容
 浮动之所以不会压住文字，因为浮动产生的目的最初是为了做文字环绕效果的。文字会围绕浮动元素。
+
+## CSS高级技巧导读
+### 精灵技术
+精灵图sprites的使用核心：
++ 精灵技术主要针对背景图片使用。就是把多个小背景图片整合到一张大图中。
++ 这个大的图片称为精灵图或者雪碧图
++ 主要借助背景位置来实现——background-position
++ 一般情况下精灵图都是负值（千万注意网页中的坐标：x轴右边走时正值，左边走时负值，y轴同理）
+```css
+    foo {
+        width: 60px;
+        height: 60px;
+        /* 可以使用background属性简写图片url x轴 y轴 */
+        background:url(images/sprites.png) no-repeat -200px -100px;
+    }
+```
+### 字体图标
+字体图标使用场景：主要用于显示网页中通用、常用的一些小图标。
+精灵图是有诸多优点的，但是缺点很明显：
++ 图片文件还是比较大的
++ 图片本身放大和缩小会失真
++ 一旦图片制作完毕想要跟换非常复杂
+此时，有一种技术的出现很好的解决了以上问题，就是字体图标iconfont
+字体图标可以为前端工程师提供一种方便高效的图标使用方式，展示的是图标，本质属于字体
+
+使用步骤：
+#### 字体图标下载
+推荐下载网站
++ icomoon.io
++ www.iconfont.cn
+
+##### 字体图标引入
+以icomoon为例，打开网站选择好图标，下载文件，fonts放到字体文件夹，style.css下列代码已入页面css
+```css
+@font-face {
+  font-family: 'icomoon';
+  src:  url('fonts/icomoon.eot?12tq33');
+  src:  url('fonts/icomoon.eot?12tq33#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?12tq33') format('truetype'),
+    url('fonts/icomoon.woff?12tq33') format('woff'),
+    url('fonts/icomoon.svg?12tq33#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+```
+根据demo.html复制字体图标到html中, 设置字体图标以及fontsize、color
+```css
+        span {
+            font-family: 'icomoon';
+            font-size: 100px;
+            color: red;
+        }
+```
+
+#### 字体图标追加
+以icomoon为例，将selection.json上传至icomoon.io，可以继续选择需要的字体图标
+### CSS三角
+```css
+    .triangle {
+        /* 定位实现在矩形周边的三角形 */
+        position: absolute;
+        right: -19px;
+        top: 100px;
+        /* 三角形必须宽度和高度为0 */
+        width: 0;
+        height: 0;
+        /* 所有边框10px但透明 */
+        border: 10px solid transparent;
+        border-left-color: pink;
+    }
+```
+### CSS用户界面样式
+所谓**界面样式**，就是更改一些用户操作样式，以便提高用户体验
+#### 鼠标样式cursor
+| 属性        | 描述      |
+| ----------- | --------- |
+| default     | 小白 默认 |
+| move        | 移动      |
+| not-allowed | 禁止      |
+| pointer     | 小手      |
+| text        | 文本      |
+#### 轮廓线outline
+给表单、文本域添加outline:0;或者outline:none样式之后,就可以去掉默认的蓝色边框
+#### 防止文本域拖拽
+```css
+    textarea {resize: none;}
+```
+### vertical-align属性应用
+### 常见布局技巧
