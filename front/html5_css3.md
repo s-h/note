@@ -79,7 +79,24 @@
 		* 15.4.2. [轮廓线outline](#outline)
 		* 15.4.3. [防止文本域拖拽](#-1)
 	* 15.5. [vertical-align属性应用](#vertical-align)
-	* 15.6. [常见布局技巧](#-1)
+		* 15.5.1. [图片地测空白缝隙解决方案](#-1)
+	* 15.6. [单行内文字溢出省略号显示](#-1)
+	* 15.7. [多行内文字溢出省略号显示](#-1)
+	* 15.8. [常见布局技巧](#-1)
+		* 15.8.1. [margin负值巧妙运用，边框重叠](#margin-1)
+		* 15.8.2. [文字围绕浮动元素](#-1)
+		* 15.8.3. [三角强化](#-1)
+	* 15.9. [CSS初始化](#CSS-1)
+* 16. [ HTML5](#HTML5)
+	* 16.1. [HTML5新增语义化标签](#HTML5-1)
+	* 16.2. [HTML5多媒体标签](#HTML5-1)
+	* 16.3. [HTML5新增input表单](#HTML5input)
+	* 16.4. [HTML5新增表单属性](#HTML5-1)
+* 17. [CSS3](#CSS3)
+	* 17.1. [CSS3新增选择器](#CSS3-1)
+		* 17.1.1. [属性选择器](#-1)
+		* 17.1.2. [结构伪类选择器——选择第n个元素](#n)
+		* 17.1.3. [伪元素选择器](#-1)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -867,4 +884,263 @@ overflow属性指定了如果内容溢出了一个元素的框（超过其指定
     textarea {resize: none;}
 ```
 ###  15.5. <a name='vertical-align'></a>vertical-align属性应用
-###  15.6. <a name='-1'></a>常见布局技巧
+CSS的**vertical-align**属性使用场景：经常用于设置图片或者表单（行内块元素）和文字垂直对齐
+官方解释：用于设置一个元素的垂直对齐方式，但是它只针对行内元素或者行内块元素有效，块元素无法使用
+| 值       | 属性                                   |
+| -------- | -------------------------------------- |
+| baseline | 默认。元素防止在父元素的基线上         |
+| bottom   | 把元素的顶端与行中最低的元素的顶端对齐 |
+| middle   | 把此元素放置在父元素的中部             |
+| top      | 把元素的顶端与行中最高元素的顶端对齐   |
+
+####  15.5.1. <a name='-1'></a>图片地测空白缝隙解决方案
+img属于行内块元素，默认对齐方式为baseline，在添加其父元素div边框时底部会有空白缝隙，需要把img对齐方式改为不是baseline
+```css
+    img {
+        vertical-align: bottom;
+    }
+```
+###  15.6. <a name='-1'></a>单行内文字溢出省略号显示
+单行文本溢出显示省略号——必须满足三个条件
+```css
+div {
+    /* 1. 先强制一行内显示文本 */
+    white-space: nowrap;
+    /* 2. 超出部分隐藏 */
+    overflow: hidden;
+    /* 文字用省略号代替超出部分 */
+    text-overflow: ellipsis;
+}
+```
+###  15.7. <a name='-1'></a>多行内文字溢出省略号显示
+```css
+多行文本溢出显示省略号，有较大兼容性问题，合适于webkit浏览器或移动端（移动端大部分是webkit内核）
+div {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+```
+###  15.8. <a name='-1'></a>常见布局技巧
+####  15.8.1. <a name='margin-1'></a>margin负值巧妙运用，边框重叠
+两个有边框的盒子，两个挨着的边框会显得较粗，使用margin负值让边框重叠（实际测试这个效果并不好）
++ 让每个盒子margin往左侧移动1px 正好压住相邻盒子边框
++ 鼠标经过某个盒子的时候，提高当前盒子的层级即可（如果没有定位，则加相对定位（保留位置），如果有定位，则加z-index。
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        ul li {
+            position: relative;
+            float: left;
+            list-style: none;
+            width: 150px;
+            height: 200px;
+            border: 1px solid red;
+            margin-left: -1px;
+        }
+
+        ul li:hover {
+            z-index: 1;
+            border: 1px solid blue;
+        }
+    </style>
+</head>
+
+<body>
+    <ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>5</li>
+        <li>5</li>
+        <li>5</li>
+    </ul>
+</body>
+
+</html>
+
+```
+####  15.8.2. <a name='-1'></a>文字围绕浮动元素
+左边图片，右边文字布局，巧妙运用浮动元素不会压住文字的特性，左边盒子浮动，文字就会环绕图片
+####  15.8.3. <a name='-1'></a>三角强化
+直角三角形
+```css
+    .box {
+        width: 0;
+        height: 0;
+        border-top: 100px solid transparent;
+        border-right: 50px solid skyblue;
+        border-bottom: 0 solid blue;
+        border-left: 0 solid green;
+    }
+```
+###  15.9. <a name='CSS-1'></a>CSS初始化
+不同浏览器对有些标签的默认值是不同的，为了消除不同浏览器对html文本呈现的差异，照顾浏览器的兼容，我们需要对CSS初始化
+以京东CSS初始化为例
+```css
+    /* 清除所有标签内外边距 */
+    * {
+        margin: 0;
+        padding: 0
+    }
+
+    /* 斜体文字不倾斜  */
+    em,
+    i {
+        font-style: normal
+    }
+
+    /* 去掉li的小圆点 */
+    li {
+        list-style: none
+    }
+
+
+    img {
+        /* 浏览器兼容性，低版本浏览器图片外面包含链接会有边框的问题 */
+        border: 0;
+        /* 取消图片底侧有空白缝隙的问题 */
+        vertical-align: middle
+    }
+
+    button {
+        /* 当鼠标经过按钮变成小手 */
+        cursor: pointer
+    }
+
+    a {
+        color: #666;
+        text-decoration: none
+    }
+
+    a:hover {
+        color: #ff0f23
+    }
+
+    button,
+    input {
+        font-family: PingFang SC, Source Han Sans CN, Microsoft YaHei, Heiti SC, tahoma, arial, Hiragino Sans GB, "\5B8B\4F53", sans-serif
+    }
+
+    body {
+        /* 文字更加清晰，抗锯齿形 */
+        -webkit-font-smoothing: antialiased;
+        background-color: #fff;
+        font: 12px/1.5 PingFang SC, Source Han Sans CN, Microsoft YaHei, Heiti SC, tahoma, arial, Hiragino Sans GB, "\5B8B\4F53", sans-serif;
+        color: #666
+    }
+
+    .hide,
+    .none {
+        display: none
+    }
+
+    /* 清除浮动 */
+    .clearfix:after {
+        visibility: hidden;
+        clear: both;
+        display: block;
+        content: ".";
+        height: 0
+    }
+
+    .clearfix {
+        *zoom: 1
+    }
+```
+##  16. <a name='HTML5'></a> HTML5
+###  16.1. <a name='HTML5-1'></a>HTML5新增语义化标签
+**HTML5**的新增特性主要针对以前的不足，增加了一些**新的标签**、**新的表单**和**新的表单属性**等
+新增语义化标签：
++ header 头部标签
++ nav 导航标签
++ ariticle 内容标签
++ section 区域标签
++ aside 侧边栏
++ footer 尾部标签
+
+###  16.2. <a name='HTML5-1'></a>HTML5多媒体标签
++ 音频 audito
++ 视频 video
+
+video常见属性
+| 属性     | 值        | 描述                                                    |
+| -------- | --------- | ------------------------------------------------------- |
+| autoplay | autopaly  | 自动播放（谷歌浏览器需要添加 muted 来解决自动播放问题） |
+| controls | controls  | 显示播放控件                                            |
+| height   | 像素      | 播放器高度                                              |
+| loop     | loop      | 循环播放                                                |
+| muted    | muted     | 静音播放                                                |
+| poster   | imgurl    | 加载等待画面图片                                        |
+| preload  | auto/none | 是否预加载视频（如果有 autoplay 忽略该属性）            |
+| src      | url       | 视频 url 地址                                           |
+| width    | 像素      | 播放器宽度                                              |
+
+
+audito常见属性
+| 属性     | 值       | 描述         |
+| -------- | -------- | ------------ |
+| autoplay | autoplay | 自动播放     |
+| controls | controls | 显示播放控件 |
+| loop     | loop     | 循环播放     |
+| src      | url      | 音频地址     |
+
+###  16.3. <a name='HTML5input'></a>HTML5新增input表单
+HTML新增input类型
+| input type 属性值 | 说明                          |
+| ----------------- | ----------------------------- |
+| color             | 生成一个颜色表单              |
+| date              | 限制用户输入必须为日期类型    |
+| email             | 限制用户输入必须为 Email 类型 |
+| month             | 限制用户输入必须为月份类型    |
+| number            | 限制用户输入必须为数字类型    |
+| search            | 搜索框                        |
+| tel               | 手机号码                      |
+| time              | 限制用户输入必须为时间类型    |
+| url               | 限制用户输入必须为 URL 类型   |
+| week              | 限制用户输入必须为星期类型    |
+
+###  16.4. <a name='HTML5-1'></a>HTML5新增表单属性
+| 属性         | 值        | 说明                                                                       |
+| ------------ | --------- | -------------------------------------------------------------------------- |
+| autocomplete | off/on    | 当用户在字段开始键入时，浏览器基于之前键入过的值，显示出该字段中填写的选项 |
+| autofocus    | autofocus | 自动聚焦属性，页面加载完成后自动聚焦到指定表单                             |
+| multiple     | multiple  | 可以多选文件提交                                                           |
+| placeholder  | 提示文本  | 表单提示信息，存在默认值将不显示                                           |
+| required     | required  | 表单拥有该属性表示其内容不能为空，必填                                     |
+
+##  17. <a name='CSS3'></a>CSS3
+###  17.1. <a name='CSS3-1'></a>CSS3新增选择器
+####  17.1.1. <a name='-1'></a>属性选择器
+属性选择器可以根据元素特定属性来选择选择元素。这样就可以不用借助于类或者id选择器
+| 选择符        | 简介                                  |
+| ------------- | ------------------------------------- |
+| E[att]        | 选择具有 att 属性的 E 元素            |
+| E[att*="val"] | 匹配 att 属性且值中含有 val 的 E 元素 |
+| E[att^="val"] | 匹配 att 属性且值以 val 开头的 E 元素 |
+| E[att="val"]  | 选择具有 att 属性值等于 val 的 E 元素 |
+| E[att$="val"] | 匹配 att 属性且以 val 结尾的元素      |
+
+```css
+    input[type=text] {
+        color: pink;
+    }
+```
+####  17.1.2. <a name='n'></a>结构伪类选择器——选择第n个元素
+结构伪类选择器主要根据文档结构来选择元素，常用于根据父级选择器里面的子元素
+####  17.1.3. <a name='-1'></a>伪元素选择器
