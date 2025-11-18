@@ -796,6 +796,39 @@ overflow属性指定了如果内容溢出了一个元素的框（超过其指定
 但是绝对定位（固定定位）会压住下面标准流所有的内容
 浮动之所以不会压住文字，因为浮动产生的目的最初是为了做文字环绕效果的。文字会围绕浮动元素。
 
+## flex布局
+Flexbox是CSS弹性盒子布局模块（Flexible Box Layout Module）的缩写，可以实现元素的**对齐、分布和空间分配**
+
+弹性盒子核心：
++ **父控子**
+
+父盒子控制子盒子如何排列
+父盒子称为容器，子盒子称为项目
+
++ **主轴和交叉轴（侧轴）
+
+主轴默认水平居中，侧轴默认垂直方向，可以更改
+
+### flex属性
+| 属性            | 作用                                                                 | 示例                                     |
+| --------------- | -------------------------------------------------------------------- | ---------------------------------------- |
+| align-content   | 定义多行是交叉轴上的对齐方式（仅当 flex-wrap:wrap 且内容换行时生效） | .container{align-content:space-between;} |
+| align-items     | 定义交叉抽对齐方式（当夯实整体对齐）                                 | .container{align-items:center;}          |
+| display         | 定义元素为 Flex 容器                                                 | .container {display:flex;}               |
+| flex-direction  | 定义主轴方向（项目排列方向）                                         | .container{flex-direction:row;}          |
+| flex-wrap       | 控制是否换行                                                         | .container{flex-wrap:wrap;}              |
+| justify-content | 定义主轴上的对齐方式（整体分布）                                     | .container{justfy-content:center;}       |
+
+
+#### justfy-content定义主轴对齐方式
+| 属性值        | 效果             | 示例                                   |
+| ------------- | ---------------- | -------------------------------------- |
+| center        | 居中对齐         | 子元素居中                             |
+| flex-end      | 右对齐           | 子元素靠右排列                         |
+| flex-start    | 左对齐（默认）   | 子元素靠左排列                         |
+| space-around  | 项目两侧间隔相等 | 每个子元素周围分配相同的空间           |
+| space-between | 两端对齐         | 首个子元素放置于起点末尾元素放置于终点 |
+| space-evenly  | 项目间隔俊宇分布 | 每个子元素之间间隔相等                 |
 ##  15. <a name='CSS'></a>CSS高级技巧导读
 ###  15.1. <a name='-1'></a>精灵技术
 精灵图sprites的使用核心：
