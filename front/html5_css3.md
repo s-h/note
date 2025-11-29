@@ -852,6 +852,45 @@ Flexbox是CSS弹性盒子布局模块（Flexible Box Layout Module）的缩写�
 | ------ | -------- |
 | nowrap | 不换行   |
 | wrap   | 换行     |
+
+
+## Grid 网格布局
+CSS Grid Layout网格布局是一种二维布局模型，允许开发者通过定义行（rows）和列（columns）来精确的控制网页元素的位置和尺寸。还可以实现响应式设计。
+
+弹性布局flex，一维布局，只能在单一方向（水平或垂直）上排列元素，合适线性排列的场景。
+
+**网格布局grid**，可以同时控制行和列的排列，实现真正的二维布局。
+
+### 设置网格布局
+容器（父盒子）设置**display:grid;（块级）或者display:inline-grid(行内)
+
+默认只创建了一个只有一列的网格
+
+**绘制网格轨道**
++ grid-template-columns 定义网格中的列
++ grid-template-rows 定义网格中的行
+
+属性值：
+有几个属性值代表创建几列/行
+```css
+a {
+    display: grid;
+    grid-template-columns: 200px 200px 200px;
+    grid-template-rows: 200px 200px 200px;
+}
+```
+### 对齐方式
+**justify-content**是控制**列轨道（column tracks）**在容器内水平分布。
+**align-content**是控制**行轨道（Row Tracks）**在容器内水平分布
+
+| 属性值        | 水平方向效果                             | 垂直方向效果                            |
+| ------------- | ---------------------------------------- | --------------------------------------- |
+| center        | 水平居中对齐                             | 垂直居中对齐                            |
+| end           | 右对齐                                   | 底部对齐                                |
+| space-around  | 两侧留出相等的空白，项目周围空间均匀分布 | 上下流出相等的空白,项目周围空间均匀分布 |
+| space-between | 首尾项目贴边                             | 上下项目贴边                            |
+| space-evenly  | 项目间、首尾与边界的空白相等             | 项目间、首尾与边界的空白相等            |
+| start(默认值) | 左对齐                                   | 顶部对齐                                |
 ##  15. <a name='CSS'></a>CSS高级技巧导读
 ###  15.1. <a name='-1'></a>精灵技术
 精灵图sprites的使用核心：
