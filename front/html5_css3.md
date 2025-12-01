@@ -915,7 +915,48 @@ grid-template-columns / grid-template-rows 属性值
 | auto             | 列宽由内容自动撑开                     | grid-template-columns:auto 100px;                        | 内容宽度不确定时的灵活布局 |
 | minmax()函数     | 定义列宽的最小值和最大值               | grid-template-columns:minmax(100px, 1fr);                | 响应式布局中限制列宽范围   |
 
+repeat()还可以自动填充：适用于响应式布局中"列数随容器宽度变化"的场景
++ autofill 尽可能多的创建列
++ autofit 尽可能拉伸列填满容器（会合并空白，列宽不小于minmax的最小值）
 
+```html
+<!-- repeat自动填充 -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            width: 80%;
+            height: 300px;
+            border: 1px solid red;
+            margin: 50px auto;
+        }
+
+        .box .item {
+            height: 120px;
+            background-color: pink;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <div class="item">1</div>
+        <div class="item">2</div>
+        <div class="item">3</div>
+        <div class="item">4</div>
+        <div class="item">5</div>
+        <div class="item">6</div>
+        <div class="item">7</div>
+        <div class="item">8</div>
+        <div class="item">9</div>
+    </div>
+    </div>
+</body>
+```
 ###  16.4. <a name='-1'></a>网格间距
 **gap**简写属性用于设置行与列之间的间隙（网格间距）
 ```css
